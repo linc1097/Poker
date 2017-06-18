@@ -13,10 +13,6 @@ import java.awt.RenderingHints;
 import java.awt.Color;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Scanner;
 /**
  * The Framework and directions and graphics for game to run. In this game, a user plays heads up poker
  * against an AI.
@@ -26,6 +22,8 @@ import java.util.Scanner;
  */
 public class Game extends Canvas implements Runnable
 {
+    public static final double FONT_SCALE = 1.;
+    public static final int P1_OFFSET = 68;
     public static final int WIDTH = 320;
     private static final long serialVersionUID = 1L;
     public static final int HEIGHT = WIDTH/12*9;
@@ -45,7 +43,7 @@ public class Game extends Canvas implements Runnable
     private int handCount = 0;
 
     //these dimensions represent points at which various cards appear on the screen
-    public final Dimension P_1 = new Dimension(WIDTH*SCALE-80,HEIGHT*SCALE-100);
+    public final Dimension P_1 = new Dimension(WIDTH*SCALE-P1_OFFSET,HEIGHT*SCALE-100);
     public final Dimension P_2 = new Dimension((int)P_1.getWidth()-90,HEIGHT*SCALE-100);
     public final Dimension FLOP_3 = new Dimension(WIDTH-36,HEIGHT-49);
     public final Dimension FLOP_2 = new Dimension((int)FLOP_3.getWidth()-85,HEIGHT-49);
@@ -97,7 +95,7 @@ public class Game extends Canvas implements Runnable
         ImageLoader x = new ImageLoader();
         try
         {
-            BufferedImage y = x.loadImage("/home/supdike/Poker/pictures/cardback.png");
+            BufferedImage y = x.loadImage("pictures/cardback.png");
             cardBack = y.getScaledInstance((y.getWidth()/9),(y.getHeight()/9),Image.SCALE_DEFAULT);
         }
         catch (IOException e)
@@ -107,7 +105,7 @@ public class Game extends Canvas implements Runnable
         }
         try
         {
-            BufferedImage z = x.loadImage("/home/supdike/Poker/pictures/chips.png");
+            BufferedImage z = x.loadImage("pictures/chips.png");
             chipsPic = z.getScaledInstance((z.getWidth()/4),(z.getHeight()/4),Image.SCALE_DEFAULT);
         }
         catch (IOException e)
@@ -350,7 +348,7 @@ public class Game extends Canvas implements Runnable
 
     private void displayChips(Graphics g)
     {
-        Font fnt2 = new Font("arial",Font.BOLD,(int)(20*.8));
+        Font fnt2 = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
         g.setFont(fnt2);
         g.setColor(Color.WHITE);
         //users chips
@@ -368,7 +366,7 @@ public class Game extends Canvas implements Runnable
         if (State == STATE.GAME)
         {
             Graphics2D g2d = (Graphics2D)g;
-            Font fnt = new Font("arial",Font.BOLD,(int)(30*.8));
+            Font fnt = new Font("arial",Font.BOLD,(int)(30*FONT_SCALE));
             g.setFont(fnt);
             g.setColor(Color.WHITE);
             g2d.draw(call);
@@ -381,7 +379,7 @@ public class Game extends Canvas implements Runnable
         else if (State == STATE.END_HAND)
         {
             Graphics2D g2d = (Graphics2D)g;
-            Font fnt = new Font("arial",Font.BOLD,(int)(20*.8));
+            Font fnt = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
             g.setFont(fnt);
             g.setColor(Color.WHITE);
             g2d.draw(call);
@@ -394,7 +392,7 @@ public class Game extends Canvas implements Runnable
         PokerHand u = new PokerHand(user.getCards());
         PokerHand c = new PokerHand(cpu.getCards());
         int winner = u.beats(c);
-        Font fnt1 = new Font("arial", Font.BOLD,(int)(50*.8));
+        Font fnt1 = new Font("arial", Font.BOLD,(int)(50*FONT_SCALE));
         g.setFont(fnt1);
         if (winner == 1)
         {

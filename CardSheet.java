@@ -13,7 +13,7 @@ public class CardSheet
     {
         ImageLoader x = new ImageLoader();
         try{
-            image = x.loadImage("/home/supdike/Poker/pictures/cards.png.png");
+            image = x.loadImage("pictures/cards.png.png");
         }
         catch (IOException e) {
             e.printStackTrace();

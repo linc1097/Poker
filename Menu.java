@@ -20,14 +20,14 @@ public class Menu
     public void render(Graphics g)
     {
         Graphics2D g2D = (Graphics2D)g;
-        Font fnt1 = new Font("arial", Font.BOLD, (int)(50*.8));
+        Font fnt1 = new Font("arial", Font.BOLD, (int)(50*Game.FONT_SCALE));
         g.setFont(fnt1);
         g.setColor(Color.white);
         g.drawString("HEADS UP POKER", Game.WIDTH/3, 100);
         g2D.draw(playButton);
         g2D.draw(helpButton);
         g2D.draw(quitButton);
-        Font fnt2 = new Font("arial", Font.BOLD, (int)(30*.8));
+        Font fnt2 = new Font("arial", Font.BOLD, (int)(30*Game.FONT_SCALE));
         g.setFont(fnt2);
         g.drawString("PLAY",playButton.x + 13,playButton.y + 37);
         g.drawString("HELP",helpButton.x + 13,helpButton.y + 37);
