@@ -11,7 +11,12 @@ import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Color;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Scanner;
 /**
  * The Framework and directions and graphics for game to run. In this game, a user plays heads up poker
  * against an AI.
@@ -40,7 +45,7 @@ public class Game extends Canvas implements Runnable
     private int handCount = 0;
 
     //these dimensions represent points at which various cards appear on the screen
-    public final Dimension P_1 = new Dimension(WIDTH*SCALE-68,HEIGHT*SCALE-100);
+    public final Dimension P_1 = new Dimension(WIDTH*SCALE-80,HEIGHT*SCALE-100);
     public final Dimension P_2 = new Dimension((int)P_1.getWidth()-90,HEIGHT*SCALE-100);
     public final Dimension FLOP_3 = new Dimension(WIDTH-36,HEIGHT-49);
     public final Dimension FLOP_2 = new Dimension((int)FLOP_3.getWidth()-85,HEIGHT-49);
@@ -60,8 +65,8 @@ public class Game extends Canvas implements Runnable
     //Image of poker Chips
     private Image chipsPic;
 
-    //ArrayList of all the cards in the hand that have been dealt, or will be dealt
-    private ArrayList<Card> cards = new ArrayList();
+    //List of all the cards in the hand that have been dealt, or will be dealt
+    private List<Card> cards = new ArrayList<Card>();
 
     Menu menu = new Menu();
     //int representing what stage of the game it is, ex: flop, river, turn
@@ -92,20 +97,20 @@ public class Game extends Canvas implements Runnable
         ImageLoader x = new ImageLoader();
         try
         {
-            BufferedImage y = x.loadImage("C:\\Users\\linc1\\Desktop\\poker-game\\pictures\\cardback.png");
+            BufferedImage y = x.loadImage("/home/supdike/Poker/pictures/cardback.png");
             cardBack = y.getScaledInstance((y.getWidth()/9),(y.getHeight()/9),Image.SCALE_DEFAULT);
         }
-        catch (IOException e) 
+        catch (IOException e)
         {
             e.printStackTrace();
             return;
         }
         try
         {
-            BufferedImage z = x.loadImage("C:\\Users\\linc1\\Desktop\\poker-game\\pictures\\chips.png");
+            BufferedImage z = x.loadImage("/home/supdike/Poker/pictures/chips.png");
             chipsPic = z.getScaledInstance((z.getWidth()/4),(z.getHeight()/4),Image.SCALE_DEFAULT);
         }
-        catch (IOException e) 
+        catch (IOException e)
         {
             e.printStackTrace();
             return;
@@ -136,7 +141,7 @@ public class Game extends Canvas implements Runnable
     /**
      * starts the game
      */
-    public static void main()
+    public static void main(String[] args)
     {
         Game game = new Game();
         game.setPreferredSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
@@ -345,7 +350,7 @@ public class Game extends Canvas implements Runnable
 
     private void displayChips(Graphics g)
     {
-        Font fnt2 = new Font("arial",Font.BOLD,20);
+        Font fnt2 = new Font("arial",Font.BOLD,(int)(20*.8));
         g.setFont(fnt2);
         g.setColor(Color.WHITE);
         //users chips
@@ -363,7 +368,7 @@ public class Game extends Canvas implements Runnable
         if (State == STATE.GAME)
         {
             Graphics2D g2d = (Graphics2D)g;
-            Font fnt = new Font("arial",Font.BOLD,30);
+            Font fnt = new Font("arial",Font.BOLD,(int)(30*.8));
             g.setFont(fnt);
             g.setColor(Color.WHITE);
             g2d.draw(call);
@@ -376,7 +381,7 @@ public class Game extends Canvas implements Runnable
         else if (State == STATE.END_HAND)
         {
             Graphics2D g2d = (Graphics2D)g;
-            Font fnt = new Font("arial",Font.BOLD,20);
+            Font fnt = new Font("arial",Font.BOLD,(int)(20*.8));
             g.setFont(fnt);
             g.setColor(Color.WHITE);
             g2d.draw(call);
@@ -389,7 +394,7 @@ public class Game extends Canvas implements Runnable
         PokerHand u = new PokerHand(user.getCards());
         PokerHand c = new PokerHand(cpu.getCards());
         int winner = u.beats(c);
-        Font fnt1 = new Font("arial", Font.BOLD,50);
+        Font fnt1 = new Font("arial", Font.BOLD,(int)(50*.8));
         g.setFont(fnt1);
         if (winner == 1)
         {
