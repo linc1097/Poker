@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 /**
  * Used to evaluate and compare poker hands
@@ -11,10 +12,10 @@ public class PokerHand
     //after the hand is evaluated, the cards that do not make up the hand will be stored here
     //for example if the hand has a pair, the remaining cards will be stored here, excluding the two that made up
     //the pair, this is so these cards can be looked at when determining kickers and high cards.
-    private ArrayList<Card> hand = new ArrayList();
+    private List<Card> hand = new ArrayList<Card>();
     //contains the important cards - ex: if there is a two pair, the four cards that make up the 
     //two pair will be moved from hand to impCards
-    private ArrayList<Card> impCards = new ArrayList();
+    private List<Card> impCards = new ArrayList<Card>();
     private int flush;
 
     public static final int HIGH_CARD = 0;
@@ -27,18 +28,30 @@ public class PokerHand
     public static final int FOUR_OF_A_KIND = 7;
     public static final int STRAIGHT_FLUSH = 8;
     /**
-     * constructor, takes an ArrayList of cards, the hand to be evaluated. Can contain up to 7 cards
+     * constructor, takes an List of cards, the hand to be evaluated. Can contain up to 7 cards
      */
-    public PokerHand(ArrayList<Card> c)
+    public PokerHand(List<Card> c)
     {
         hand = c;
     }
     /**
-     * returns the ArrayList hand
+     * returns the List hand
      */
-    public ArrayList<Card> getHand()
+    public List<Card> getHand()
     {
         return hand;
+    }
+    /**
+     * return the string representation of this class, PokerHand
+     */
+    public String toString()
+    {
+        String s = new String();
+        for (Card c : hand)
+        {
+            s += "[" + c + "]";
+        }
+        return s;
     }
     /**
      * If the hand contains a three of a kind and two pairs, this method is called to remove the lower
@@ -110,7 +123,7 @@ public class PokerHand
         return HIGH_CARD;
     }
 
-    public ArrayList<Card> impCards()
+    public List<Card> impCards()
     {
         return impCards;
     }
@@ -170,7 +183,7 @@ public class PokerHand
     /**
      * returns true if hand contains a card with a rank (integer from 2-14, 14 being an ace) of the int given
      */
-    public boolean hasRank(int rank, ArrayList<Card> c)
+    public boolean hasRank(int rank, List<Card> c)
     {
         for (int x = 0;x<c.size();x++)
         {
@@ -180,10 +193,10 @@ public class PokerHand
         return false;
     }
     /**
-     * returns true if the given ArrayList of cards contains a straight, if the method is being called on
+     * returns true if the given List of cards contains a straight, if the method is being called on
      * the impCards method to determine if cards making up a flush contain a straight, the boolean is set to true
      */
-    public boolean hasStraight(ArrayList<Card> c, boolean straightFlushCheck)
+    public boolean hasStraight(List<Card> c, boolean straightFlushCheck)
     {
         for (int x = 0;x<c.size()-4;x++)
         {
@@ -198,7 +211,7 @@ public class PokerHand
                 {
                     if (straightFlushCheck)
                     {
-                        ArrayList<Card> temp = new ArrayList();
+                        List<Card> temp = new ArrayList<Card>();
                         temp.addAll(c);
                         impCards.clear();
                         impCards.add(temp.get(x));
@@ -214,7 +227,7 @@ public class PokerHand
                 {
                     if (straightFlushCheck)
                     {
-                        ArrayList<Card> temp = new ArrayList();
+                        List<Card> temp = new ArrayList<Card>();
                         temp.addAll(c);
                         impCards.clear();
                         impCards.add(temp.get(x));

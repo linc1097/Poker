@@ -14,11 +14,11 @@ public class Card
     final static int HEARTS = 3;
     final static int DIAMONDS = 4;
     //cards
-    final int ACE = 14;
-    final int KING = 13;
-    final int QUEEN = 12;
-    final int JACK = 11;
-    final int TEN = 10,NINE = 9,EIGHT = 8,SEVEN = 7,SIX = 6,FIVE = 5,FOUR = 4,THREE = 3,TWO = 2;
+    final static int ACE = 14;
+    final static int KING = 13;
+    final static int QUEEN = 12;
+    final static int JACK = 11;
+    final static int TEN = 10,NINE = 9,EIGHT = 8,SEVEN = 7,SIX = 6,FIVE = 5,FOUR = 4,THREE = 3,TWO = 2;
     
     private CardSheet cards = new CardSheet();
 

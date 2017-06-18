@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 /**
  * contains two arrays, one containing all 52 cards in order, one containing a shuffled version.
@@ -14,8 +15,8 @@ public class Deck
     //number of ranks in a deck of cards
     final int NUM_RANKS = 14;
     final int SHUFFLE_NUMB = 500;
-    private ArrayList<Card> deck = new ArrayList();
-    private ArrayList<Card> allCards = new ArrayList();
+    private List<Card> deck = new ArrayList<Card>();
+    private List<Card> allCards = new ArrayList<Card>();
     private int place = 0;
     /**
      * sets the allCards array to contain a deck of all cards in order of suit and rank.

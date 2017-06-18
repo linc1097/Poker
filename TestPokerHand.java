@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 /**
  * Used to test and debug the PokerHand method, which is responsible for evaluating
@@ -40,7 +41,7 @@ public class TestPokerHand
      */
     public void test_Hand()
     {
-        ArrayList<Card> hand = new ArrayList();
+        List<Card> hand = new ArrayList<Card>();
         Card a = new Card(1,9);
         hand.add(a);
         Card b = new Card(2,10);
@@ -64,8 +65,8 @@ public class TestPokerHand
      */
     public void test_Beats()
     {
-        ArrayList<Card> hand1 = new ArrayList();
-        ArrayList<Card> hand2 = new ArrayList();
+        List<Card> hand1 = new ArrayList<Card>();
+        List<Card> hand2 = new ArrayList<Card>();
         //hand1
         Card a1 = new Card(1,14);
         hand1.add(a1);
@@ -106,7 +107,7 @@ public class TestPokerHand
     public void countHands()
     {
         Deck deck = new Deck();
-        ArrayList<Card> hand = new ArrayList();
+        List<Card> hand = new ArrayList<Card>();
         int handVal;
         for (int x = 0;x<ITERATIONS;x++)
         {

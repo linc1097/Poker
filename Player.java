@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 /**
@@ -8,7 +9,7 @@ import java.util.Collections;
  */
 public class Player
 {
-    private ArrayList<Card> cards = new ArrayList();
+    private List<Card> cards = new ArrayList<Card>();
     public int chips;
     public boolean isTurn = false;
     public boolean call = false;
@@ -38,11 +39,11 @@ public class Player
     }
 
     /**
-     * returns a copy of the ArrayList conataining the cards int he players hand
+     * returns a copy of the List conataining the cards int he players hand
      */
-    public ArrayList<Card> getCards()
+    public List<Card> getCards()
     {
-        ArrayList<Card> x = new ArrayList();
+        List<Card> x = new ArrayList<Card>();
         for (int i = 0;i<cards.size();i++)
         {
             x.add(cards.get(i).clone());
