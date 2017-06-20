@@ -70,6 +70,7 @@ public class Player
     {
         raise = amount;
         Game.otherPlayer(this).call = false;
+        call = true;
     }
     
     public void changeIsTurn()

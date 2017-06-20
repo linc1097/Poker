@@ -36,11 +36,12 @@ public class Game extends Canvas implements Runnable
     private boolean turnDone = false;
     private boolean riverDone = false;
     private boolean handDone = false;
+    private boolean userFirst = true;
 
     public static Player user = new Player(NUM_CHIPS);
-    public static Player cpu = new Player(NUM_CHIPS);
+    public static AI cpu = new AI(NUM_CHIPS);
     private Player[] players;
-    private int handCount = 0;
+    private int handCount = 1;
 
     //these dimensions represent points at which various cards appear on the screen
     public final Dimension P_1 = new Dimension(WIDTH*SCALE-P1_OFFSET,HEIGHT*SCALE-100);
@@ -57,6 +58,7 @@ public class Game extends Canvas implements Runnable
     private Rectangle call = new Rectangle(20,HEIGHT*SCALE-70,100,50);
     private Rectangle fold = new Rectangle(140,HEIGHT*SCALE-70,100,50);
     private Rectangle raise = new Rectangle(20, HEIGHT*SCALE -140,100,50);
+    private String lastAction;
 
     //Image of the back of a card
     private Image cardBack;
@@ -69,8 +71,8 @@ public class Game extends Canvas implements Runnable
     Menu menu = new Menu();
     //int representing what stage of the game it is, ex: flop, river, turn
     public static int stage = 0;
-    public int pot;
-    public int bet;
+    public static int pot;
+    public static int bet;
 
     private boolean running = false;
     private Thread thread;
@@ -206,6 +208,13 @@ public class Game extends Canvas implements Runnable
         riverDone = false;
         handDone = false;
         newTurn();
+        for (int x = 0;x<players.length;x++)//blinds
+        {
+            players[x].raise(10);
+            raise(players[x]);
+        }
+        players[1].call = false; //allows for big blind to have option to raise
+        switchTurn();
     }
 
     public static Player otherPlayer(Player self)
@@ -216,39 +225,46 @@ public class Game extends Canvas implements Runnable
             return user;
     }
 
+    public void raise(Player player)
+    {
+        pot += bet - player.alreadyIn;
+        player.chips -= bet - player.alreadyIn;
+        player.alreadyIn += bet - player.alreadyIn;
+        bet += player.raise;
+        pot += bet - player.alreadyIn;
+        player.raise = 0;
+        player.chips -= bet - player.alreadyIn;
+        player.alreadyIn = bet;
+    }
+
     public void ask(Player player)
     {
         if (player == cpu)
         {
-            player.call = true;
-            player.chips -= bet-player.alreadyIn;
+            AI ai = (AI)player;
+            ai.act();
+        }
+        if (player.call && player.raise == 0 && !handDone)
+        {
+            player.chips -= bet -player.alreadyIn;
             pot += bet - player.alreadyIn;
             switchTurn();
+            if (player == cpu)
+                lastAction = "AI called your bet of " + (bet - player.alreadyIn) + " chips";
         }
-        else
+        else if (player.fold && !handDone)
         {
-            if (player.call)
-            {
-                player.chips -= bet -player.alreadyIn;
-                pot += bet - player.alreadyIn;
-                switchTurn();
-            }
-            else if (player.fold)
-            {
-                otherPlayer(player).chips+=pot;
-                stage = 0;
-                player.fold = false;
-                switchTurn();
-            }
-            else if (player.raise != 0)
-            {
-                player.chips -= player.raise;
-                bet += player.raise;
-                pot += bet - player.alreadyIn;
-                player.raise = 0;
-                player.call = true;
-                switchTurn();
-            }
+            otherPlayer(player).chips+=pot;
+            stage = 6;
+            player.fold = false;
+            switchTurn();
+        }
+        else if (player.raise != 0 && !handDone)
+        {
+            if (player == cpu)
+                lastAction = "AI raises " + player.raise + " chips";
+            raise(player);
+            switchTurn();
         }
     }
 
@@ -284,10 +300,12 @@ public class Game extends Canvas implements Runnable
 
     public void newTurn()
     {
-        players[0].isTurn = true;
-        players[1].isTurn = false;
+        players[1].isTurn = true;
+        players[0].isTurn = false;
         user.call = false;
         cpu.call = false;
+        user.alreadyIn = 0;
+        cpu.alreadyIn = 0;
         bet = 0;
     }
 
@@ -424,6 +442,14 @@ public class Game extends Canvas implements Runnable
         }
     }
 
+    public void drawLastAction(Graphics g)
+    {
+        Font fnt = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
+        g.setFont(fnt);
+        g.setColor(Color.WHITE);
+        g.drawString(lastAction,WIDTH*SCALE - 250,HEIGHT*SCALE - 400);
+    }
+
     /**
      * this method controls and displays the game when it is being played, and not in menu mode.
      * It deals and displays cards and determines winners and losers of hands
@@ -432,6 +458,8 @@ public class Game extends Canvas implements Runnable
     {
         drawButtons(g);
         displayChips(g);
+        if (lastAction != null)
+            drawLastAction(g);
         g.drawImage(cards.get(0).getCard(),(int)P_1.getWidth(),(int)P_1.getHeight(),this);
         g.drawImage(cards.get(1).getCard(),(int)P_2.getWidth(),(int)P_2.getHeight(),this);
         askPlayers();
