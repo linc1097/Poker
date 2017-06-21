@@ -13,6 +13,7 @@ public class Player
     public int chips;
     public boolean isTurn = false;
     public boolean call = false;
+    public boolean calling = false;
     public int raise = 0;
     public boolean fold = false;
     public int alreadyIn = 0;
@@ -59,6 +60,7 @@ public class Player
     public void call()
     {
         call = true;
+        calling = true;
     }
 
     public void fold()
