@@ -13,11 +13,114 @@ public class MouseInput implements MouseListener
 
     public void mouseEntered(MouseEvent e)
     {
+        Rectangle playButton = new Rectangle(Game.WIDTH/2+120,150,100,50);
+        Rectangle helpButton = new Rectangle(Game.WIDTH/2+120,250,100,50);
+        Rectangle quitButton = new Rectangle(Game.WIDTH/2+120,350,100,50);
+        Rectangle call = new Rectangle(20,Game.HEIGHT*Game.SCALE-70,100,50);
+        Rectangle fold = new Rectangle(140,Game.HEIGHT*Game.SCALE-70,100,50);
+        Rectangle raise = new Rectangle(20, Game.HEIGHT*Game.SCALE -140,100,50);
+        int mx = e.getX();
+        int my = e.getY();
+        if (Game.State == Game.STATE.MENU)
+        {
+            if (mx >= playButton.getX() && mx<= playButton.getX() + playButton.getWidth())
+            {
+                if (my >= playButton.getY() && my<= playButton.getY() + playButton.getHeight())
+                {
+                    Menu.onPlayButton = true;
+                }
+            }
+        }
+        else if (Game.State == Game.STATE.GAME)
+        {
+            if (mx >= call.getX() && mx<= call.getX() + call.getWidth())
+            {
+                if (my >= call.getY() && my<= call.getY() + call.getHeight())
+                {
+                    Game.onCall = true;
+                }
+            }
+            if (mx >= fold.getX() && mx<= fold.getX() + fold.getWidth())
+            {
+                if (my >= fold.getY() && my<= fold.getY() + fold.getHeight())
+                {
+                    Game.onFold = true;
+                }
+            }
+            if (mx >= raise.getX() && mx<= raise.getX() + raise.getWidth())
+            {
+                if (my >= raise.getY() && my<= raise.getY() + raise.getHeight())
+                {
+                    Game.onRaise = true;
+                }
+            }
+        }
+        else if (Game.State == Game.STATE.END_HAND || Game.State == Game.STATE.FOLD)
+        {
+            if (mx >= call.getX() && mx<= call.getX() + call.getWidth())
+            {
+                if (my >= call.getY() && my<= call.getY() + call.getHeight())
+                {
+                    Game.onCall = true;
+                }
+            }
+        }
     }
 
     public void mouseExited(MouseEvent e)
     {
-
+        Rectangle playButton = new Rectangle(Game.WIDTH/2+120,150,100,50);
+        Rectangle helpButton = new Rectangle(Game.WIDTH/2+120,250,100,50);
+        Rectangle quitButton = new Rectangle(Game.WIDTH/2+120,350,100,50);
+        Rectangle call = new Rectangle(20,Game.HEIGHT*Game.SCALE-70,100,50);
+        Rectangle fold = new Rectangle(140,Game.HEIGHT*Game.SCALE-70,100,50);
+        Rectangle raise = new Rectangle(20, Game.HEIGHT*Game.SCALE -140,100,50);
+        int mx = e.getX();
+        int my = e.getY();
+        if (Game.State == Game.STATE.MENU)
+        {
+            if (mx >= playButton.getX() && mx<= playButton.getX() + playButton.getWidth())
+            {
+                if (my >= playButton.getY() && my<= playButton.getY() + playButton.getHeight())
+                {
+                    Menu.onPlayButton = false;
+                }
+            }
+        }
+        else if (Game.State == Game.STATE.GAME)
+        {
+            if (mx >= call.getX() && mx<= call.getX() + call.getWidth())
+            {
+                if (my >= call.getY() && my<= call.getY() + call.getHeight())
+                {
+                    Game.onCall = false;
+                }
+            }
+            if (mx >= fold.getX() && mx<= fold.getX() + fold.getWidth())
+            {
+                if (my >= fold.getY() && my<= fold.getY() + fold.getHeight())
+                {
+                    Game.onFold = false;
+                }
+            }
+            if (mx >= raise.getX() && mx<= raise.getX() + raise.getWidth())
+            {
+                if (my >= raise.getY() && my<= raise.getY() + raise.getHeight())
+                {
+                    Game.onRaise = false;
+                }
+            }
+        }
+        else if (Game.State == Game.STATE.END_HAND || Game.State == Game.STATE.FOLD)
+        {
+            if (mx >= call.getX() && mx<= call.getX() + call.getWidth())
+            {
+                if (my >= call.getY() && my<= call.getY() + call.getHeight())
+                {
+                    Game.onCall = false;
+                }
+            }
+        }
     }
     /**
      * if the mouse is pressed in a certain area, with the game in a certain stage, the desired 
@@ -68,7 +171,7 @@ public class MouseInput implements MouseListener
                 }
             }
         }
-        else if (Game.State == Game.STATE.END_HAND)
+        else if (Game.State == Game.STATE.END_HAND || Game.State == Game.STATE.FOLD)
         {
             if (mx >= call.getX() && mx<= call.getX() + call.getWidth())
             {

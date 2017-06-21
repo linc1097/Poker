@@ -55,8 +55,11 @@ public class Game extends Canvas implements Runnable
 
     //rectangles that act as buttons and if clicked, will effect the game
     private Rectangle call = new Rectangle(20,HEIGHT*SCALE-70,100,50);
+    public static boolean onCall = false;
     private Rectangle fold = new Rectangle(140,HEIGHT*SCALE-70,100,50);
+    public static boolean onFold = false;
     private Rectangle raise = new Rectangle(20, HEIGHT*SCALE -140,100,50);
+    public static boolean onRaise = false;
 
     //Image of the back of a card
     private Image cardBack;
@@ -89,7 +92,8 @@ public class Game extends Canvas implements Runnable
     public static enum STATE {
         MENU,
         GAME,
-        END_HAND
+        END_HAND,
+        FOLD
     };
 
     public static STATE State = STATE.MENU;
@@ -289,16 +293,7 @@ public class Game extends Canvas implements Runnable
         }
         else if (player.fold && !handDone)
         {
-            otherPlayer(player).chips+=pot;
-            stage = 6;
-            player.fold = false;
-            switchTurn();
-            if (player == cpu)
-            {
-            }
-            else
-            {
-            }
+            State = STATE.FOLD;
         }
         else if (player.raise != 0 && !handDone)
         {
@@ -447,14 +442,14 @@ public class Game extends Canvas implements Runnable
             g.drawString("fold",fold.x+19,fold.y+40);
             g.drawString("raise",raise.x+19,raise.y+40);
         }
-        else if (State == STATE.END_HAND)
+        else if (State == STATE.END_HAND || State == STATE.FOLD)
         {
             Graphics2D g2d = (Graphics2D)g;
             Font fnt = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
             g.setFont(fnt);
             g.setColor(Color.WHITE);
             g2d.draw(call);
-            g.drawString("next hand",call.x+19,call.y+40);
+            g.drawString("next hand",call.x+3,call.y+30);
         }
     }
     String displayUSER;
@@ -472,7 +467,7 @@ public class Game extends Canvas implements Runnable
             Font fnt = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
             g.setColor(Color.WHITE);
             g.setFont(fnt);
-            g.drawString(displayUSER, (int)P_2.getWidth()-155,(int)P_2.getHeight()-33);
+            g.drawString(displayUSER, (int)P_2.getWidth()-175,(int)P_2.getHeight()-38);
         }
         if (user.alreadyIn != 0)
         {
@@ -498,7 +493,7 @@ public class Game extends Canvas implements Runnable
             Font fnt = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
             g.setColor(Color.WHITE);
             g.setFont(fnt);
-            g.drawString(displayCPU,(int)P_2.getWidth()-155,(int)P_2.getHeight()-298);
+            g.drawString(displayCPU,(int)P_2.getWidth()-180,(int)P_2.getHeight()-238);
         }
         if (cpu.alreadyIn != 0)
         {
@@ -557,8 +552,8 @@ public class Game extends Canvas implements Runnable
         displayChips(g);
         g.drawImage(cards.get(0).getCard(),(int)P_1.getWidth(),(int)P_1.getHeight(),this);
         g.drawImage(cards.get(1).getCard(),(int)P_2.getWidth(),(int)P_2.getHeight(),this);
-        if (System.currentTimeMillis() - newStageTime > 2500)
-        askPlayers();
+        if (System.currentTimeMillis() - newStageTime > 2500 && State != STATE.FOLD)
+            askPlayers();
         displayActionUser(g);
         displayActionCpu(g);
         if (stage > 1)//flop
@@ -659,6 +654,25 @@ public class Game extends Canvas implements Runnable
         {
             g.drawImage(image,0,0,getWidth(),getHeight(),this);
             menu.render(g);
+        }
+        else if (State == STATE.FOLD)
+        {
+            g.drawImage(image,0,0,getWidth(),getHeight(),this);
+            Font fnt1 = new Font("arial", Font.BOLD,(int)(50*FONT_SCALE));
+            g.setFont(fnt1);
+            g.setColor(Color.WHITE);
+            g.drawString("Fold", WIDTH+85, HEIGHT-150);
+            hand(g);
+            if (cpu.fold)
+            {
+                user.chips += pot;
+                cpu.fold = false;
+            }
+            else if (user.fold)
+            {
+                cpu.chips += pot;
+                user.fold = false;
+            }
         }
         else
         {
