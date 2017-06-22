@@ -11,9 +11,9 @@ import java.awt.Rectangle;
  */
 public class Menu
 {
-    public Rectangle playButton = new Rectangle(Game.WIDTH/2+120,150,100,50);
-    public Rectangle helpButton = new Rectangle(Game.WIDTH/2+120,250,100,50);
-    public Rectangle quitButton = new Rectangle(Game.WIDTH/2+120,350,100,50);
+    public Rectangle playButton = new Rectangle(Game.WIDTH/4+120,150,100,50);
+    public Rectangle helpButton = new Rectangle(Game.WIDTH/4+120,250,100,50);
+    public Rectangle quitButton = new Rectangle(Game.WIDTH/4+120,350,100,50);
     /**
      * renders a menu screen
      */
@@ -23,7 +23,7 @@ public class Menu
         Font fnt1 = new Font("arial", Font.BOLD, (int)(50*Game.FONT_SCALE));
         g.setFont(fnt1);
         g.setColor(Color.white);
-        g.drawString("HEADS UP POKER", Game.WIDTH/3, 100);
+        g.drawString("HEADS UP POKER", Game.WIDTH/6, 100);
         g2D.draw(playButton);
         g2D.draw(helpButton);
         g2D.draw(quitButton);

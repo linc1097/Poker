@@ -24,12 +24,11 @@ public class Game extends Canvas implements Runnable
 {
     public static final double FONT_SCALE = 1.;
     public static final int P1_OFFSET = 68;
-    public static final int WIDTH = 320;
-    private static final long serialVersionUID = 1L;
+    public static final int WIDTH = 640;
     public static final int HEIGHT = WIDTH/12*9;
-    public static final int SCALE = 2;
     public final String TITLE = "Poker";
     private static final int NUM_CHIPS = 1000;
+    //int represeting who won at the end of a hand
     private int winner;
 
     //these variables control the dealing of new cards as the game progresses
@@ -41,23 +40,24 @@ public class Game extends Canvas implements Runnable
     public static Player user = new Player(NUM_CHIPS);
     public static AI cpu = new AI(NUM_CHIPS);
     private Player[] players;
+    //how many hands have been played
     private int handCount = 1;
 
     //these dimensions represent points at which various cards appear on the screen
-    public final Dimension P_1 = new Dimension(WIDTH*SCALE-P1_OFFSET,HEIGHT*SCALE-100);
-    public final Dimension P_2 = new Dimension((int)P_1.getWidth()-90,HEIGHT*SCALE-100);
-    public final Dimension FLOP_3 = new Dimension(WIDTH-36,HEIGHT-49);
-    public final Dimension FLOP_2 = new Dimension((int)FLOP_3.getWidth()-85,HEIGHT-49);
-    public final Dimension FLOP_1 = new Dimension((int)FLOP_2.getWidth()-85,HEIGHT-49);
-    public final Dimension TURN_DIMENSION = new Dimension((int)FLOP_3.getWidth()+85,HEIGHT-49);
-    public final Dimension RIVER_DIMENSION = new Dimension((int)TURN_DIMENSION.getWidth()+85,HEIGHT-49);
+    public final Dimension P_1 = new Dimension(WIDTH-P1_OFFSET,HEIGHT-100);
+    public final Dimension P_2 = new Dimension((int)P_1.getWidth()-90,HEIGHT-100);
+    public final Dimension FLOP_3 = new Dimension(WIDTH/2-36,HEIGHT/2-49);
+    public final Dimension FLOP_2 = new Dimension((int)FLOP_3.getWidth()-85,HEIGHT/2-49);
+    public final Dimension FLOP_1 = new Dimension((int)FLOP_2.getWidth()-85,HEIGHT/2-49);
+    public final Dimension TURN_DIMENSION = new Dimension((int)FLOP_3.getWidth()+85,HEIGHT/2-49);
+    public final Dimension RIVER_DIMENSION = new Dimension((int)TURN_DIMENSION.getWidth()+85,HEIGHT/2-49);
     public final Dimension O_1 = new Dimension(10,10);
     public final Dimension O_2 = new Dimension((int)O_1.getWidth()+87,10);
 
     //rectangles that act as buttons and if clicked, will effect the game
-    private Rectangle call = new Rectangle(20,HEIGHT*SCALE-70,100,50);
-    private Rectangle fold = new Rectangle(140,HEIGHT*SCALE-70,100,50);
-    private Rectangle raise = new Rectangle(20, HEIGHT*SCALE -140,100,50);
+    private Rectangle call = new Rectangle(20,HEIGHT-70,100,50);
+    private Rectangle fold = new Rectangle(140,HEIGHT-70,100,50);
+    private Rectangle raise = new Rectangle(20, HEIGHT-140,100,50);
 
     //Image of the back of a card
     private Image cardBack;
@@ -74,18 +74,30 @@ public class Game extends Canvas implements Runnable
     public static int stage = 0;
     public static int pot;
     public static int bet;
+    //the number of chips in the pot after the last stage
     public static int lastPot;
+    //strings to show the user what the last action taken by each player was (check/call/raise)
     public String cpuAction = "";
     public String userAction = "";
-    public double timeCPU = 0;
-    public double timeUSER = 0;
+    //System.currentTimeMillis() at last new move of the CPU or USER
+    public static double timeCPU = 0;
+    public static double timeUSER = 0;
+    //amount of chips the user or cpu has put in following their last action
     public int amountUSER;
     public int amountCPU;
+    //true if the cpu/user has just made a new move
     private boolean newCPUMove = true;
     private boolean newUSERMove = true;
+    //when a new Stage of the game is reached (flop/turn/river)
+    //this variable is set to System.currentTimeMillis()
+    public double newStageTime = 0;
+    //the String that represents the last action of the cpu/user
+    String displayUSER;
+    String displayCPU;
 
     private boolean running = false;
     private Thread thread;
+    //when somebody folds, if it was the CPU who folded, this variable is set to true
     public boolean cpuFolded;
 
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
@@ -99,7 +111,7 @@ public class Game extends Canvas implements Runnable
 
     public static STATE State = STATE.MENU;
 
-    private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
+    private BufferedImage image = new BufferedImage(WIDTH/2,HEIGHT/2,BufferedImage.TYPE_INT_RGB);
     private CardSheet cardSheet;
     /**
      * initializes the picture of the cardback and the creates a mouse listener to take input from the mouse
@@ -168,9 +180,9 @@ public class Game extends Canvas implements Runnable
     public static void main(String[] args)
     {
         Game game = new Game();
-        game.setPreferredSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
-        game.setMaximumSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
-        game.setMinimumSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
+        game.setPreferredSize(new Dimension(WIDTH,HEIGHT));
+        game.setMaximumSize(new Dimension(WIDTH,HEIGHT));
+        game.setMinimumSize(new Dimension(WIDTH,HEIGHT));
 
         JFrame frame = new JFrame(game.TITLE);
         frame.add(game);
@@ -206,6 +218,8 @@ public class Game extends Canvas implements Runnable
         cards.clear();
         Deck deck = new Deck();
         deck.shuffle();
+        cpu.alreadyIn = 0;
+        user.alreadyIn = 0;
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
@@ -242,6 +256,9 @@ public class Game extends Canvas implements Runnable
         switchTurn();
     }
 
+    /**
+     * takes a player (either cpu or player) and returns the other one
+     */
     public static Player otherPlayer(Player self)
     {
         if (self == user)
@@ -250,6 +267,9 @@ public class Game extends Canvas implements Runnable
             return user;
     }
 
+    /**
+     * if a player raises, this method is called to alter all of the variables in order to carry out the raise
+     */
     public void raise(Player player)
     {
         pot += bet - player.alreadyIn;
@@ -262,6 +282,10 @@ public class Game extends Canvas implements Runnable
         player.alreadyIn = bet;
     }
 
+    /**
+     * asks the AI what it wants to do, and will change variables move the game forward based 
+     * on the AI or users actions
+     */
     public void ask(Player player)
     {
         if (player == cpu && !cpu.call)
@@ -314,6 +338,9 @@ public class Game extends Canvas implements Runnable
         }
     }
 
+    /**
+     * changes whose turn it is between the user and AI
+     */
     public void switchTurn()
     {
         if (user.isTurn)
@@ -328,6 +355,10 @@ public class Game extends Canvas implements Runnable
         }
     }
 
+    /**
+     * based on timing of graphics and whose turn it is, it asks a player what they want to do and carries
+     * out that action
+     */
     public void askPlayers()
     {
         if (user.isTurn && System.currentTimeMillis() - timeCPU > 2500)
@@ -345,8 +376,9 @@ public class Game extends Canvas implements Runnable
         }
     }
 
-    public double newStageTime = 0;
-
+    /**
+     * called in between new cards being dealt (when both players have called/checked)
+     */
     public void newTurn()
     {
         players[1].isTurn = true;
@@ -414,6 +446,9 @@ public class Game extends Canvas implements Runnable
         g.drawImage(cards.get(6).getCard(),(int)RIVER_DIMENSION.getWidth(),(int)RIVER_DIMENSION.getHeight(),this);
     }
 
+    /**
+     * displays all of the information regarding chips
+     */
     private void displayChips(Graphics g)
     {
         Font fnt2 = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
@@ -429,6 +464,9 @@ public class Game extends Canvas implements Runnable
         g.drawString("Pot: " + lastPot,(int)FLOP_3.getWidth()+10,(int)FLOP_3.getHeight()-10);
     }
 
+    /**
+     * draws the buttons the user can press based on what state the game is in
+     */
     private void drawButtons(Graphics g)
     {
         if (State == STATE.GAME)
@@ -456,7 +494,11 @@ public class Game extends Canvas implements Runnable
             g.drawString("next hand",call.x+3,call.y+30);
         }
     }
-    String displayUSER;
+
+    /**
+     * displays how many chips the user has bet and for 2 seconds after an action is taken (raise/call/check)
+     * it is displayed for the user.
+     */
     public void displayActionUser(Graphics g)
     {
         if (newUSERMove && System.currentTimeMillis() - timeUSER >= 2000)
@@ -482,7 +524,11 @@ public class Game extends Canvas implements Runnable
             g.drawImage(smallStack,(int)P_2.getWidth()-200,(int)P_2.getHeight()-35,this);
         }
     }
-    String displayCPU;
+
+    /**
+     * displays how many chips the cpu has bet and for 2 seconds after an action is taken (raise/call/check)
+     * it is displayed for the user.
+     */
     public void displayActionCpu(Graphics g)
     {
         if (newCPUMove && System.currentTimeMillis() - timeCPU >= 2000)
@@ -509,6 +555,9 @@ public class Game extends Canvas implements Runnable
         }
     }
 
+    /**
+     * finds and displays to the user who won the last hand
+     */
     private void findWinner(Graphics g)
     {
         if (!handDone)
@@ -523,7 +572,7 @@ public class Game extends Canvas implements Runnable
         g.setFont(fnt1);
         if (winner == 1)
         {
-            g.drawString("You Win!", WIDTH+85, HEIGHT-150);
+            g.drawString("You Win!", WIDTH/2+85, HEIGHT/2-150);
             if (!handDone)
             {
                 user.chips += pot;
@@ -532,7 +581,7 @@ public class Game extends Canvas implements Runnable
         }
         else if (winner == 0)
         {
-            g.drawString("You Lose", WIDTH+85, HEIGHT-150);
+            g.drawString("You Lose", WIDTH/2+85, HEIGHT/2-150);
             if (!handDone)
             {
                 cpu.chips += pot;
@@ -541,7 +590,7 @@ public class Game extends Canvas implements Runnable
         }
         else
         {
-            g.drawString("You Tied", WIDTH+85, HEIGHT-150);
+            g.drawString("You Tied", WIDTH/2+85, HEIGHT/2-150);
             if (!handDone)
             {
                 cpu.chips += pot/2;
@@ -670,7 +719,7 @@ public class Game extends Canvas implements Runnable
             Font fnt1 = new Font("arial", Font.BOLD,(int)(50*FONT_SCALE));
             g.setFont(fnt1);
             g.setColor(Color.WHITE);
-            g.drawString("Fold", WIDTH+85, HEIGHT-150);
+            g.drawString("Fold", WIDTH/2+85, HEIGHT/2-150);
             hand(g);
             if (cpu.fold)
             {
@@ -685,9 +734,9 @@ public class Game extends Canvas implements Runnable
                 cpuFolded = false;
             }
             if (cpuFolded)
-                g.drawString("You Win", WIDTH+85, HEIGHT-100);
+                g.drawString("You Win", WIDTH/2+85, HEIGHT/2-100);
             else
-                g.drawString("You Lose", WIDTH+85, HEIGHT-100);
+                g.drawString("You Lose", WIDTH/2+85, HEIGHT/2-100);
         }
         else
         {
