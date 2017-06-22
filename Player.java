@@ -9,7 +9,7 @@ import java.util.Collections;
  */
 public class Player
 {
-    private List<Card> cards = new ArrayList<Card>();
+    protected List<Card> cards = new ArrayList<Card>();
     public int chips;
     public boolean isTurn = false;
     public boolean call = false;

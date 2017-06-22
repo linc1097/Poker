@@ -7,67 +7,96 @@
  */
 public class AI extends Player
 {
-    private Card card1;
-    private Card card2;
-    private Card card3;
-    private Card card4;
-    private Card card5;
-    private Card card6;
-    private Card card7;
-    private Card opponentCard1;
-    private Card opponentCard2;
-    
+    private int numRaises = 0;
+
     public AI(int numChips)
     {
         super(numChips);
     }
-    
-    public void newHand(Card a, Card b)
+
+    public void actPreFlop()
     {
-        card1 = a;
-        card2 = b;
+        int rankSum = cards.get(0).getRank() + cards.get(1).getRank();
+        if (Game.bet == 20 && this.alreadyIn == 10)
+        {
+            if (rankSum < 16)
+                fold();
+            else if (rankSum < 20)
+                call();
+            else
+            {
+                int raiseNum = 10*(int)(Math.random()*3+1);
+                raise(raiseNum);
+                numRaises++;
+            }
+        }
+        else if (Game.bet>20)
+        {
+            numRaises++;
+            boolean smallBet = Game.bet<50;
+            if (rankSum < 16)
+                fold();
+            else if (smallBet && rankSum <20)
+                call();
+            else if (rankSum > 20)
+            {
+                if (randBool(.22))
+                {
+                    int raiseNum = (int)((Game.bet - alreadyIn)*(Math.random()*2+1));
+                    raise(raiseNum);
+                    numRaises++;
+                }
+                else
+                {
+                    call();
+                }
+            }
+            else
+                fold();
+        }
+        else
+        {
+            if (rankSum > 20)
+            {
+                int raiseNum = 10*(int)(Math.random()*3+1);
+                raise(raiseNum);
+                numRaises++;
+            }
+            else
+                call();
+        }
+
     }
-    
-    public void addFlop(Card a, Card b , Card c)
+
+    public boolean randBool(double percentTrue)
     {
-        card3 = a;
-        card4 = b;
-        card5 = c;
+        return Math.random()<percentTrue;
     }
-    
-    public void addRiver(Card a)
-    {
-        card6 = a;
-    }
-    
-    public void addTurn(Card a)
-    {
-        card7 = a;
-    }
-    
-    public void seeOpponentsCards(Card a, Card b)
-    {
-        opponentCard1 = a;
-        opponentCard2 = b;
-    }
-    
+
     public void act()
     {
-        if (Game.bet == 0)//will check if it can
+        if (Game.stage == Game.PRE_FLOP)
         {
-            call();
+            actPreFlop();
         }
-        else if (Game.bet > 100)//if bet is over 100, folds
+        else
         {
-            fold();
-        }
-        else if (Game.bet%2!=0)//if bet is odd, raises 11
-        {
-            raise(1);
-        }
-        else//if bet is even, calls
-        {
-            call();
+            if (Game.bet == 0)//will check if it can
+            {
+                call();
+            }
+            else if (Game.bet > 100)//if bet is over 100, folds
+            {
+                fold();
+            }
+            else if (Game.bet%2!=0)//if bet is odd, raises 11
+            {
+                raise(1);
+            }
+            else//if bet is even, calls
+            {
+                call();
+            }
         }
     }
 }

@@ -12,10 +12,8 @@ import java.awt.Rectangle;
 public class Menu
 {
     public Rectangle playButton = new Rectangle(Game.WIDTH/2+120,150,100,50);
-    public Rectangle PBSurround = new Rectangle((int)playButton.getX()-3,(int)playButton.getY()-3,(int)playButton.getWidth()+3,(int)playButton.getHeight()+3);
     public Rectangle helpButton = new Rectangle(Game.WIDTH/2+120,250,100,50);
     public Rectangle quitButton = new Rectangle(Game.WIDTH/2+120,350,100,50);
-    public static boolean onPlayButton = false;
     /**
      * renders a menu screen
      */
@@ -26,8 +24,6 @@ public class Menu
         g.setFont(fnt1);
         g.setColor(Color.white);
         g.drawString("HEADS UP POKER", Game.WIDTH/3, 100);
-        if (onPlayButton)
-        g2D.draw(PBSurround);
         g2D.draw(playButton);
         g2D.draw(helpButton);
         g2D.draw(quitButton);
