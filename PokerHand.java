@@ -30,10 +30,27 @@ public class PokerHand
     /**
      * constructor, takes an List of cards, the hand to be evaluated. Can contain up to 7 cards
      */
-    public PokerHand(List<Card> c)
+    public PokerHand(List<Card> originalHand)
     {
-        hand = c;
+        hand.add(originalHand.get(0));
+        for (int x = 1;x<originalHand.size();x++)
+        {
+            for (int y = 0;y<hand.size();y++)
+            {
+                if (originalHand.get(x).getRank()<hand.get(y).getRank())
+                {
+                    hand.add(y,originalHand.get(x));
+                    break;
+                }
+                else if (y == hand.size()-1)
+                {
+                    hand.add(originalHand.get(x));
+                    break;
+                }
+            }
+        }
     }
+
     /**
      * returns the List hand
      */
@@ -41,6 +58,7 @@ public class PokerHand
     {
         return hand;
     }
+
     /**
      * return the string representation of this class, PokerHand
      */
@@ -53,6 +71,7 @@ public class PokerHand
         }
         return s;
     }
+
     /**
      * If the hand contains a three of a kind and two pairs, this method is called to remove the lower
      * of the two pairs from impCards so that what is left are te cards relevant to the full house
@@ -65,34 +84,12 @@ public class PokerHand
             impCards.remove(impCards.size()-1);
         }
     }
-    /**
-     * sorts hand from lowest (2) to highest (ace)
-     */
-    public void selectionSort()
-    {
-        for (int x = 0;x<hand.size();x++)
-        {
-            int smallest = 20;
-            int place = x;
-            for (int i = x; i<hand.size();i++)
-            {
-                if (hand.get(i).getRank()<smallest)
-                {
-                    place = i;
-                    smallest = hand.get(i).getRank();
-                }
-            }
-            Card c = hand.get(x);
-            hand.set(x,hand.get(place));
-            hand.set(place,c);
-        }
-    }
+
     /**
      * returns an int representing what the hand contains
      */
     public int hasWhat()
     {
-        selectionSort();
         flush = hasFlush();
         if (hasStraightFlush())
             return STRAIGHT_FLUSH;
@@ -127,6 +124,7 @@ public class PokerHand
     {
         return impCards;
     }
+
     /**
      * returns true if the hand has a pair, moves the pair from hand to impCards
      */
@@ -143,6 +141,7 @@ public class PokerHand
         }
         return false;
     }
+
     /**
      * returns true if the hand has a four of a kind, moves the four of a kind from hand to impCards
      */
@@ -163,6 +162,7 @@ public class PokerHand
         }
         return false;
     }
+
     /**
      * returns true if the hand has a three of a kind, and moves the three of a kind from hand to impCards
      */
@@ -180,6 +180,7 @@ public class PokerHand
         }
         return false;
     }
+
     /**
      * returns true if hand contains a card with a rank (integer from 2-14, 14 being an ace) of the int given
      */
@@ -192,54 +193,43 @@ public class PokerHand
         }
         return false;
     }
+
     /**
      * returns true if the given List of cards contains a straight, if the method is being called on
      * the impCards method to determine if cards making up a flush contain a straight, the boolean is set to true
      */
-    public boolean hasStraight(List<Card> c, boolean straightFlushCheck)
+    public boolean hasStraight(List<Card> cards, boolean straightFlushCheck)
     {
-        for (int x = 0;x<c.size()-4;x++)
+        int count = 0;
+        boolean smallestStraight = cards.get(0).getRank() == 2;
+        for (int y = 0;y<cards.size()-1;y++)
         {
-            int start = c.get(x).getRank();
-            if (start>10)
-            {
+            if (cards.get(y).getRank()+1==cards.get(y+1).getRank())
+                count++;
+            else if (cards.get(y).getRank() == cards.get(y+1).getRank())
                 ;
-            }
-            else if (start == 2)
-            {
-                if (hasRank(3,c)&&hasRank(4,c)&&hasRank(5,c)&&hasRank(14,c))
-                {
-                    if (straightFlushCheck)
-                    {
-                        List<Card> temp = new ArrayList<Card>();
-                        temp.addAll(c);
-                        impCards.clear();
-                        impCards.add(temp.get(x));
-                    }
-                    else
-                        impCards.add(c.get(x));
-                    return true;
-                }
-            }
             else
             {
-                if (hasRank(start+1,c)&&hasRank(start+2,c)&&hasRank(start+3,c)&&hasRank(start+4,c))
+                count = 0;
+                smallestStraight = false;
+            }
+            if (count == 4 || (smallestStraight && count == 3 && cards.get(cards.size()-1).getRank() == 14))
+            {
+                if (straightFlushCheck)
                 {
-                    if (straightFlushCheck)
-                    {
-                        List<Card> temp = new ArrayList<Card>();
-                        temp.addAll(c);
-                        impCards.clear();
-                        impCards.add(temp.get(x));
-                    }
-                    else
-                        impCards.add(c.get(x));
-                    return true;
+                    List<Card> temp = new ArrayList<Card>();
+                    temp.addAll(cards);
+                    impCards.clear();
+                    impCards.add(temp.get(y));
                 }
+                else
+                    impCards.add(cards.get(y));
+                return true;
             }
         }
         return false;
     }
+
     /**
      * returns the value of the suit of the flush if hand contains a 
      * flush and 0 if there is no flush and moves the cards of the flush suit into impCards
@@ -262,17 +252,18 @@ public class PokerHand
                 HEARTS++;
             else
                 DIAMONDS++;
-            }  
+        }  
         if (CLUBS>4)
-        return Card.CLUBS;
+            return Card.CLUBS;
         if (SPADES>4)
-        return Card.SPADES;
+            return Card.SPADES;
         if (HEARTS>4)
-        return Card.HEARTS;
+            return Card.HEARTS;
         if (DIAMONDS>4)
-        return Card.DIAMONDS;
+            return Card.DIAMONDS;
         return 0;
     }
+
     /**
      * returns true if hand has a straight flush and moves the lowest card of the straight into impCards
      */
@@ -290,6 +281,7 @@ public class PokerHand
         else
             return false;
     }
+
     /**
      * returns the rank of the card in impCards that is the given integer far in the list
      * however, duplicates are skipped, so 1,1,2,2 with a 2 passed in returns 2
@@ -314,6 +306,7 @@ public class PokerHand
         }
         return 0;
     }
+
     /**
      * returns the same value as impCardRank() but from hand, which contains cards that may be pertinent
      * to tie breaking and high cards
@@ -410,7 +403,7 @@ public class PokerHand
                     return 1;
                 if (impCardRank(1)<other.impCardRank(1))
                     return 0;
-                    for (int x = 1;x<3;x++)
+                for (int x = 1;x<3;x++)
                 {
                     if (this.highCardRank(x)>other.highCardRank(x))
                         return 1;

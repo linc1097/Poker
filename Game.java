@@ -215,6 +215,7 @@ public class Game extends Canvas implements Runnable
     {
         handCount++;
         pot = 0;
+        bet = 0;
         cards.clear();
         Deck deck = new Deck();
         deck.shuffle();
@@ -235,13 +236,12 @@ public class Game extends Canvas implements Runnable
             players = new Player[] {cpu,user};
         for (int x = 0;x<players.length;x++)
         {
-            players[x].clearCards();
             players[x].alreadyIn = 0;
         }
-        user.add(cards.get(0));
-        user.add(cards.get(1));
-        cpu.add(cards.get(7));
-        cpu.add(cards.get(8));
+        user.set(0,cards.get(0));
+        user.set(1,cards.get(1));
+        cpu.set(0,cards.get(7));
+        cpu.set(1,cards.get(8));
         flopDone = false;
         turnDone = false;
         riverDone = false;
@@ -254,6 +254,7 @@ public class Game extends Canvas implements Runnable
         }
         players[1].call = false; //allows for big blind to have option to raise
         switchTurn();
+        newStageTime = System.currentTimeMillis();
     }
 
     /**
@@ -400,9 +401,9 @@ public class Game extends Canvas implements Runnable
         {
             for (int x = 0;x<players.length;x++)
             {
-                players[x].add(cards.get(2));
-                players[x].add(cards.get(3));
-                players[x].add(cards.get(4));
+                players[x].set(2,cards.get(2));
+                players[x].set(3,cards.get(3));
+                players[x].set(4,cards.get(4));
             }
             flopDone = true;
             newTurn();
@@ -421,7 +422,7 @@ public class Game extends Canvas implements Runnable
         {
             for (int x = 0;x<players.length;x++)
             {
-                players[x].add(cards.get(5));
+                players[x].set(5,cards.get(5));
             }
             turnDone = true;
             newTurn();
@@ -438,7 +439,7 @@ public class Game extends Canvas implements Runnable
         {
             for (int x = 0;x<players.length;x++)
             {
-                players[x].add(cards.get(6));
+                players[x].set(6,cards.get(6));
             }
             riverDone = true;
             newTurn();

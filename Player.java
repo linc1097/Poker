@@ -9,7 +9,7 @@ import java.util.Collections;
  */
 public class Player
 {
-    protected List<Card> cards = new ArrayList<Card>();
+    protected List<Card> hand = new ArrayList<Card>();
     public int chips;
     public boolean isTurn = false;
     public boolean call = false;
@@ -24,6 +24,11 @@ public class Player
     public Player(int num)
     {
         chips = num;
+        Card card = new Card(2,2);
+        for (int x = 0;x<7;x++)
+        {
+            hand.add(card);
+        }
     }
 
     /**
@@ -31,12 +36,17 @@ public class Player
      */
     public void add(Card card)
     {
-        cards.add(card);
+        hand.add(card);
     }
-    
+
+    public void set(int index, Card card)
+    {
+        hand.set(index,card);
+    }
+
     public void clearCards()
     {
-        cards.clear();
+        hand.clear();
     }
 
     /**
@@ -45,16 +55,16 @@ public class Player
     public List<Card> getCards()
     {
         List<Card> x = new ArrayList<Card>();
-        for (int i = 0;i<cards.size();i++)
+        for (int i = 0;i<hand.size();i++)
         {
-            x.add(cards.get(i).clone());
+            x.add(hand.get(i).clone());
         }
         return x;
     }
 
     public String toString()
     {
-        return "" + cards;
+        return "" + hand;
     }
 
     public void call()
@@ -74,7 +84,7 @@ public class Player
         Game.otherPlayer(this).call = false;
         call = true;
     }
-    
+
     public void changeIsTurn()
     {
         if (isTurn)

@@ -18,6 +18,32 @@ public class Deck
     private List<Card> deck = new ArrayList<Card>();
     private List<Card> allCards = new ArrayList<Card>();
     private int place = 0;
+
+    public Deck()
+    {
+
+    }
+
+    public void remove(Card card)
+    {
+        for (int x = 0;x<deck.size();x++)
+        {
+            if (card.equals(deck.get(x)))
+                deck.remove(x);
+        }
+    }
+
+    public void setInOrder()
+    {
+        setAllCards();
+        deck = allCards;
+    }
+
+    public int size()
+    {
+        return deck.size();
+    }
+
     /**
      * sets the allCards array to contain a deck of all cards in order of suit and rank.
      */
@@ -42,6 +68,11 @@ public class Deck
         {
             System.out.println(deck.get(x));
         }
+    }
+
+    public List<Card> getDeck()
+    {
+        return deck;
     }
 
     /**
