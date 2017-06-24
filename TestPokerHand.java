@@ -43,19 +43,19 @@ public class TestPokerHand
     public void test_Hand()
     {
         List<Card> hand = new ArrayList<Card>();
-        Card a = new Card(1,9);
+        Card a = new Card(1,3);
         hand.add(a);
-        Card b = new Card(2,10);
+        Card b = new Card(2,7);
         hand.add(b);
-        Card c = new Card(3,11);
+        Card c = new Card(3,12);
         hand.add(c);
-        Card d = new Card(4,12);
+        Card d = new Card(4,6);
         hand.add(d);
         Card e = new Card(3,13);
         hand.add(e);
-        Card f = new Card(2,3);
+        Card f = new Card(2,4);
         hand.add(f);
-        Card g = new Card(1,3);
+        Card g = new Card(1,12);
         hand.add(g);
         PokerHand p = new PokerHand(hand);
         int x = p.hasWhat();
@@ -157,8 +157,8 @@ public class TestPokerHand
                             loses++;
                         else
                             ties++;
-                        if (count % 1000 == 0)
-                        System.out.println(count/1000);
+                        if (count % 42807 == 0)
+                            System.out.println(count/42807);
                         count++;
                     }
                 }

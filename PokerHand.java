@@ -50,6 +50,33 @@ public class PokerHand
             }
         }
     }
+    
+    public PokerHand()
+    {
+    }
+    
+    public void setNewPokerHand(List<Card> originalHand)
+    {
+        hand.clear();
+        impCards.clear();
+        hand.add(originalHand.get(0));
+        for (int x = 1;x<originalHand.size();x++)
+        {
+            for (int y = 0;y<hand.size();y++)
+            {
+                if (originalHand.get(x).getRank()<hand.get(y).getRank())
+                {
+                    hand.add(y,originalHand.get(x));
+                    break;
+                }
+                else if (y == hand.size()-1)
+                {
+                    hand.add(originalHand.get(x));
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      * returns the List hand

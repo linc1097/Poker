@@ -565,8 +565,6 @@ public class Game extends Canvas implements Runnable
         {
             PokerHand u = new PokerHand(user.getCards());
             PokerHand c = new PokerHand(cpu.getCards());
-            cpu.add(cards.get(0));
-            cpu.add(cards.get(1));
             winner = u.beats(c);
         }
         Font fnt1 = new Font("arial", Font.BOLD,(int)(50*FONT_SCALE));
@@ -578,6 +576,8 @@ public class Game extends Canvas implements Runnable
             {
                 user.chips += pot;
                 handDone = true;
+                System.out.println(user.hand);
+                System.out.println(cpu.hand);
             }
         }
         else if (winner == 0)
@@ -587,6 +587,8 @@ public class Game extends Canvas implements Runnable
             {
                 cpu.chips += pot;
                 handDone = true;
+                System.out.println(user.hand);
+                System.out.println(cpu.hand);
             }
         }
         else
@@ -597,6 +599,8 @@ public class Game extends Canvas implements Runnable
                 cpu.chips += pot/2;
                 user.chips += pot/2;
                 handDone = true;
+                System.out.println(user.hand);
+                System.out.println(cpu.hand);
             }
         }
     }
