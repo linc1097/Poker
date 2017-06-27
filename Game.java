@@ -32,16 +32,16 @@ public class Game extends Canvas implements Runnable
     private int winner;
 
     //these variables control the dealing of new cards as the game progresses
-    private boolean flopDone = false;
-    private boolean turnDone = false;
-    private boolean riverDone = false;
-    private boolean handDone = false;
+    private static boolean flopDone = false;
+    private static boolean turnDone = false;
+    private static boolean riverDone = false;
+    private static boolean handDone = false;
 
     public static Player user = new Player(NUM_CHIPS);
     public static AI cpu = new AI(NUM_CHIPS);
-    private Player[] players;
+    private static Player[] players;
     //how many hands have been played
-    private int handCount = 1;
+    private static int handCount = 1;
 
     //these dimensions represent points at which various cards appear on the screen
     public final Dimension P_1 = new Dimension(WIDTH-P1_OFFSET,HEIGHT-100);
@@ -67,7 +67,7 @@ public class Game extends Canvas implements Runnable
     private Image smallStack;
 
     //List of all the cards in the hand that have been dealt, or will be dealt
-    private List<Card> cards = new ArrayList<Card>();
+    private static List<Card> cards = new ArrayList<Card>();
 
     Menu menu = new Menu();
     //int representing what stage of the game it is, ex: flop, river, turn
@@ -90,10 +90,13 @@ public class Game extends Canvas implements Runnable
     private boolean newUSERMove = true;
     //when a new Stage of the game is reached (flop/turn/river)
     //this variable is set to System.currentTimeMillis()
-    public double newStageTime = 0;
+    public static double newStageTime = 0;
     //the String that represents the last action of the cpu/user
     String displayUSER;
     String displayCPU;
+    //keeps track of if someone folded, set to false if they folded
+    public static boolean cpuFold = true;
+    public static boolean userFold = true;
 
     private boolean running = false;
     private Thread thread;
@@ -211,16 +214,19 @@ public class Game extends Canvas implements Runnable
     /**
      * resets variables and deals new cards for a new hand to start
      */
-    private void newHand()
+    public static void newHand()
     {
         handCount++;
         pot = 0;
+        lastPot = 0;
         bet = 0;
         cards.clear();
+        user.fold = false;
+        cpu.fold = false;
         Deck deck = new Deck();
         deck.shuffle();
-        cpu.alreadyIn = 0;
-        user.alreadyIn = 0;
+        cpuFold = true;
+        userFold = true;
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
@@ -271,7 +277,7 @@ public class Game extends Canvas implements Runnable
     /**
      * if a player raises, this method is called to alter all of the variables in order to carry out the raise
      */
-    public void raise(Player player)
+    public static void raise(Player player)
     {
         pot += bet - player.alreadyIn;
         player.chips -= bet - player.alreadyIn;
@@ -321,6 +327,8 @@ public class Game extends Canvas implements Runnable
         else if (player.fold && !handDone)
         {
             State = STATE.FOLD;
+            otherPlayer(player).chips += pot;
+            handDone = true;
         }
         else if (player.raise != 0 && !handDone)
         {
@@ -342,7 +350,7 @@ public class Game extends Canvas implements Runnable
     /**
      * changes whose turn it is between the user and AI
      */
-    public void switchTurn()
+    public static void switchTurn()
     {
         if (user.isTurn)
         {
@@ -370,7 +378,7 @@ public class Game extends Canvas implements Runnable
         {
             ask(cpu);
         }
-        if (user.call && cpu.call && System.currentTimeMillis() - newStageTime > 2500)
+        if (user.call && cpu.call && !cpu.fold && !user.fold && System.currentTimeMillis() - newStageTime > 2500)
         {
             stage++;
             newStageTime = System.currentTimeMillis();
@@ -380,7 +388,7 @@ public class Game extends Canvas implements Runnable
     /**
      * called in between new cards being dealt (when both players have called/checked)
      */
-    public void newTurn()
+    public static void newTurn()
     {
         players[1].isTurn = true;
         players[0].isTurn = false;
@@ -727,18 +735,6 @@ public class Game extends Canvas implements Runnable
             g.drawString("Fold", WIDTH/2+85, HEIGHT/2-150);
             hand(g);
             if (cpu.fold)
-            {
-                user.chips += pot;
-                cpu.fold = false;
-                cpuFolded = true;
-            }
-            else if (user.fold)
-            {
-                cpu.chips += pot;
-                user.fold = false;
-                cpuFolded = false;
-            }
-            if (cpuFolded)
                 g.drawString("You Win", WIDTH/2+85, HEIGHT/2-100);
             else
                 g.drawString("You Lose", WIDTH/2+85, HEIGHT/2-100);
