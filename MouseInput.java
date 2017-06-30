@@ -40,6 +40,9 @@ public class MouseInput implements MouseListener
                 if (my >= playButton.getY() && my<= playButton.getY() + playButton.getHeight())
                 {
                     Game.State = Game.STATE.GAME;
+                    Game.user.chips = 1000;
+                    Game.cpu.chips = 1000;
+                    Game.stage = 0;
                 }
             }
         }
@@ -81,6 +84,16 @@ public class MouseInput implements MouseListener
                 {
                     Game.stage = 0;
                     Game.State = Game.STATE.GAME;
+                }
+            }
+        }
+        else if (Game.State == Game.STATE.ALL_IN)
+        {
+            if (mx >= call.getX() && mx<= call.getX() + call.getWidth())
+            {
+                if (my >= call.getY() && my<= call.getY() + call.getHeight())
+                {
+                    Game.stage++;
                 }
             }
         }

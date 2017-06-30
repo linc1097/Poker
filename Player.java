@@ -80,9 +80,14 @@ public class Player
 
     public void raise(int amount)
     {
-        raise = amount;
-        Game.otherPlayer(this).call = false;
-        call = true;
+        if (chips <= Game.bet || Game.otherPlayer(this).chips <= Game.bet)
+            call();
+        else
+        {
+            raise = amount;
+            Game.otherPlayer(this).call = false;
+            call = true;
+        }
     }
 
     public void changeIsTurn()
