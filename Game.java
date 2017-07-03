@@ -30,6 +30,8 @@ public class Game extends Canvas implements Runnable
     private static final int NUM_CHIPS = 1000;
     //int represeting who won at the end of a hand
     private int winner;
+    
+    public static int[] primes = {0,1,2,3,5,7,11,13,17,19,23,29,31,37,41,43};
 
     //these variables control the dealing of new cards as the game progresses
     private static boolean flopDone = false;
