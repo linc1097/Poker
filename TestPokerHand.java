@@ -43,20 +43,16 @@ public class TestPokerHand
     public void test_Hand()
     {
         List<Card> hand = new ArrayList<Card>();
-        Card a = new Card(1,3);
+        Card a = new Card(1,13);
         hand.add(a);
-        Card b = new Card(2,7);
+        Card b = new Card(2,13);
         hand.add(b);
-        Card c = new Card(3,12);
+        Card c = new Card(3,13);
         hand.add(c);
-        Card d = new Card(4,6);
+        Card d = new Card(4,2);
         hand.add(d);
-        Card e = new Card(3,13);
+        Card e = new Card(1,2);
         hand.add(e);
-        Card f = new Card(2,4);
-        hand.add(f);
-        Card g = new Card(1,12);
-        hand.add(g);
         PokerHand p = new PokerHand(hand);
         int x = p.hasWhat();
         System.out.println(x);

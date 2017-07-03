@@ -14,6 +14,7 @@ public class AI extends Player
     private int numRaises = 0;
     private Map<StartingHand, Double> map = new HashMap<StartingHand, Double>();
     private List<Card> opponentHand = new ArrayList<Card>();
+    private PokerHand1 evaluator = new PokerHand1();
     public AI(int numChips)
     {
         super(numChips);
@@ -101,9 +102,7 @@ public class AI extends Player
                             for (int d = 0;d<x.size();d++)
                             {
                                 opponentHand.set(1,x.get(d));
-                                PokerHand self = new PokerHand(hand);
-                                PokerHand opponent = new PokerHand(opponentHand);
-                                value = self.beats(opponent);
+                                value = evaluator.winner(hand,opponentHand);
                                 if (value == 1)
                                     wins++;
                                 else if (value == 0)
@@ -144,9 +143,7 @@ public class AI extends Player
                         for (int d = 0;d<x.size();d++)
                         {
                             opponentHand.set(1,x.get(d));
-                            PokerHand self = new PokerHand(hand);
-                            PokerHand opponent = new PokerHand(opponentHand);
-                            value = self.beats(opponent);
+                            value = evaluator.winner(hand,opponentHand);
                             if (value == 1)
                                 wins++;
                             else if (value == 0)
@@ -178,9 +175,7 @@ public class AI extends Player
                     for (int d = 0;d<x.size();d++)
                     {
                         opponentHand.set(1,x.get(d));
-                        PokerHand self = new PokerHand(hand);
-                        PokerHand opponent = new PokerHand(opponentHand);
-                        value = self.beats(opponent);
+                        value = evaluator.winner(hand,opponentHand);
                         if (value == 1)
                             wins++;
                         else if (value == 0)
@@ -206,7 +201,7 @@ public class AI extends Player
         }
         return list;
     }
-    
+
     public void actPreFlop()
     {
         double percentWin = winPercentage();
@@ -313,11 +308,11 @@ public class AI extends Player
             if (percentWin > 75)
             {
                 if (randBool(.5))
-                raise(randInt(roundTen(Game.pot/2),roundTen(Game.pot*1.5),10));
+                    raise(randInt(roundTen(Game.pot/2),roundTen(Game.pot*1.5),10));
                 else if (randBool(.85))
-                raise(randInt(10,30,10));
+                    raise(randInt(10,30,10));
                 else
-                call();
+                    call();
             }
             else if (percentWin > 50)
             {

@@ -50,11 +50,7 @@ public class PokerHand
             }
         }
     }
-    
-    public PokerHand()
-    {
-    }
-    
+
     public void setNewPokerHand(List<Card> originalHand)
     {
         hand.clear();
@@ -92,7 +88,7 @@ public class PokerHand
     public String toString()
     {
         String s = new String();
-        for (Card c : hand)
+        for (Card c : impCards)
         {
             s += "[" + c + "]";
         }
@@ -268,6 +264,7 @@ public class PokerHand
         int HEARTS = 0;
         int DIAMONDS = 0;
         int check = 0;
+        int answer;
         for (int x = 0;x<hand.size();x++)
         {
             check = hand.get(x).getSuit();
@@ -281,14 +278,39 @@ public class PokerHand
                 DIAMONDS++;
         }  
         if (CLUBS>4)
-            return Card.CLUBS;
-        if (SPADES>4)
-            return Card.SPADES;
-        if (HEARTS>4)
-            return Card.HEARTS;
-        if (DIAMONDS>4)
-            return Card.DIAMONDS;
-        return 0;
+        {
+            answer = Card.CLUBS;
+            fillImpCardsFlush(Card.CLUBS);
+        }
+        else if (SPADES>4)
+        {
+            answer = Card.SPADES;
+            fillImpCardsFlush(Card.SPADES);
+        }
+        else if (HEARTS>4)
+        {
+            answer = Card.HEARTS;
+            fillImpCardsFlush(Card.HEARTS);
+        }
+        else if (DIAMONDS>4)
+        {
+            answer = Card.DIAMONDS;
+            fillImpCardsFlush(Card.DIAMONDS);
+        }
+        else
+        answer = 0;
+        return answer;
+    }
+
+    public void fillImpCardsFlush(int suit)
+    {
+        for (int x = 0;x<hand.size();x++)
+        {
+            if (hand.get(x).getSuit() == suit)
+            {
+                impCards.add(hand.get(x));
+            }
+        }
     }
 
     /**
@@ -298,11 +320,6 @@ public class PokerHand
     {
         if (flush!=0)
         {
-            for (int x = hand.size()-1;x>=0;x--)
-            {
-                if (hand.get(x).getSuit() == flush)
-                    impCards.add(hand.get(x));
-            }
             return hasStraight(impCards,true);
         }
         else
@@ -323,6 +340,7 @@ public class PokerHand
             if (rank!=lastRank)
             {
                 i--;
+                lastRank = rank;
                 if (i==0)
                     return rank;
             }

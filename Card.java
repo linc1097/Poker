@@ -128,7 +128,7 @@ public class Card
      */
     public BufferedImage getCard()
     {        
-        return cards.grabCardImage(rank,suit);
+       return cards.grabCardImage(rank,suit);
     }
     /**
      * returns a clone of the card
