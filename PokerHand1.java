@@ -10,21 +10,36 @@ import java.util.HashMap;
  */
 public class PokerHand1
 {
-    private Map<Integer,Integer> map;
-
+    private Map<Integer,Integer> map = new HashMap<Integer, Integer>();
+    private int z;
+    private int y;
+    private int x;
+    private int w;
+    private int v;
+    private int val;
+    private int high;
+    private int[] array = MakeMap.makeArray();
     /**
      * Constructor for objects of class PokerHand1
      */
     public PokerHand1()
     {
-        HandMap handMap = new HandMap();
-        map = handMap.getMap();
+        map.put(new Integer(5355), new Integer(1510));
+        map.put(new Integer(2167957),new Integer(2350));
+        map.put(new Integer(422807),new Integer(2627));
+        map.put(new Integer(260710),new Integer(3343));
+        map.put(new Integer(2117843),new Integer(3731));
+        map.put(new Integer(16782571),new Integer(3896));
+        map.put(new Integer(20691),new Integer(4220));
+        map.put(new Integer(70805),new Integer(4338));
+        map.put(new Integer(2519959),new Integer(5380));
+        map.put(new Integer(2357862),new Integer(5980));
     }
 
     public int winner(List<Card> hand1, List<Card> hand2)
     {
-        int h1 = handVal(hand1);
-        int h2 = handVal(hand2);
+        int h1 = handValue(hand1);
+        int h2 = handValue(hand2);
         if (h1>h2)
             return 1;
         else if (h2>h1)
@@ -32,34 +47,39 @@ public class PokerHand1
         else
             return 2;
     }
-    
-    public void testMap()
+
+    public void testMapSpeed()
     {
+
         int a;
+        /*
         int b;
         List<Card> hand = new ArrayList<Card>();
         Card c1 = new Card(1,2);
         Card c2 = new Card(2,6);
-        Card c5 = new Card(1,7);
+        Card c3 = new Card(1,7);
         Card c4 = new Card(4,13);
-        Card c3 = new Card(3,13);
+        Card c5 = new Card(3,13);
         hand.add(c1);
         hand.add(c2);
         hand.add(c3);
         hand.add(c4);
-        hand.add(c5);
-        for (int x = 0;x<9000000*21;x++)
+        hand.add(c5);*/
+        double time = System.currentTimeMillis();
+        for (int x = 0;x<9000000/4*21;x++)
         {
-            HandToInt z = new HandToInt(hand);
-            b = z.numValue();
-            a = map.get(b);
-            if (x%(90000*21)==0)
-            System.out.println(x/(21*90000));
+            //HandToInt z = new HandToInt(hand);
+            //b = z.numValue();
+            a = map.get(48);
+            if (x%(90000*21/4)==0)
+                System.out.println(x/(21*90000/4));
         }
+        System.out.println((System.currentTimeMillis() - time));
     }
 
-    public int handVal(List<Card> hand)
+    public int handVal(List<Card> hand)//old, slow method
     {
+        int count = 0;
         int high = 0;
         int val;
         int index = 0;
@@ -86,8 +106,60 @@ public class PokerHand1
                 if (val>high)
                     high = val;
                 index = 0;
+                count++;
             }
         }
+        System.out.println(count);
         return high;
+    }
+
+    public int handValue(List<Card> hand)
+    {
+        high = 0;
+        for (int a = 0;a<3;a++)
+        {
+            z = hand.get(a).getPrime();
+            for (int b = a+1;b<4;b++)
+            {
+                y = z*hand.get(b).getPrime();
+                for (int c = b+1;c<5;c++)
+                {
+                    x = y*hand.get(c).getPrime();
+                    for (int d = c+1;d<6;d++)
+                    {
+                        w = x*hand.get(d).getPrime();
+                        for (int e = d+1;e<7;e++)
+                        {
+                            v = w*hand.get(e).getPrime();
+                            if (hasFlush(hand.get(a),hand.get(b),hand.get(c),hand.get(d),hand.get(e)))
+                                v*=43;
+                            val = rankOfHand(v);
+                            if (val>high)
+                                high = val;
+                            v = w;
+                        }
+                        w = x;
+                    }
+                    x = y;
+                }
+                y = z;
+            }
+            z = 1;
+        }
+        return high;
+    }
+
+    public int rankOfHand(int val)
+    {
+        int x = array[(val%(2*1024*1024))];
+        if (x == 0)
+        return map.get(val);
+        else
+            return x;
+    }
+
+    public boolean hasFlush(Card a,Card b,Card c,Card d,Card e)
+    {
+        return a.getSuit()==b.getSuit()&&b.getSuit()==c.getSuit()&&c.getSuit()==d.getSuit()&&d.getSuit()==e.getSuit();
     }
 }

@@ -72,8 +72,10 @@ public class AI extends Player
             int count = 0;
             Deck deck = new Deck();
             deck.setInOrder();
+            double time;
             if (Game.stage == Game.FLOP)
             {
+                time = System.currentTimeMillis();
                 for (int x = 2;x<5;x++)
                 {
                     opponentHand.set(x,hand.get(x));
@@ -88,7 +90,7 @@ public class AI extends Player
                     opponentHand.set(5,deck.get(a));
                     List<Card> z = clone(deck.getDeck());
                     z.remove(a);
-                    for (int b = 0;b<z.size();b++)
+                    for (int b = a;b<z.size();b++)
                     {
                         hand.set(6,z.get(b));
                         opponentHand.set(6,z.get(b));
@@ -99,23 +101,27 @@ public class AI extends Player
                             opponentHand.set(0,y.get(c));
                             List<Card> x = clone(y);
                             x.remove(c);
-                            for (int d = 0;d<x.size();d++)
+                            for (int d = c;d<x.size();d++)
                             {
                                 opponentHand.set(1,x.get(d));
-                                value = evaluator.winner(hand,opponentHand);
+                                //value = evaluator.winner(hand,opponentHand);
+                                PokerHand h1 = new PokerHand(hand);
+                                PokerHand h2 = new PokerHand(opponentHand);
+                                value = h1.beats(h2);
                                 if (value == 1)
                                     wins++;
                                 else if (value == 0)
                                     loses++;
                                 else
                                     ties++;
-                                if (count % 42807 == 0)
-                                    System.out.println(count/42807);
+                                if (count % (42807/4) == 0)
+                                    System.out.println(count/(42807/4));
                                 count++;
                             }
                         }
                     }
                 }
+                System.out.println((System.currentTimeMillis() - time));
                 System.out.println("wins: " +(double)wins/count); 
                 return (double)wins/count*100;
             }
@@ -140,10 +146,12 @@ public class AI extends Player
                         opponentHand.set(0,y.get(c));
                         List<Card> x = clone(y);
                         x.remove(c);
-                        for (int d = 0;d<x.size();d++)
+                        for (int d = c;d<x.size();d++)
                         {
                             opponentHand.set(1,x.get(d));
-                            value = evaluator.winner(hand,opponentHand);
+                            PokerHand h1 = new PokerHand(hand);
+                            PokerHand h2 = new PokerHand(opponentHand);
+                            value = h1.beats(h2);
                             if (value == 1)
                                 wins++;
                             else if (value == 0)
@@ -172,10 +180,12 @@ public class AI extends Player
                     opponentHand.set(0,deck.get(c));
                     List<Card> x = clone(deck.getDeck());
                     x.remove(c);
-                    for (int d = 0;d<x.size();d++)
+                    for (int d = c;d<x.size();d++)
                     {
                         opponentHand.set(1,x.get(d));
-                        value = evaluator.winner(hand,opponentHand);
+                        PokerHand h1 = new PokerHand(hand);
+                        PokerHand h2 = new PokerHand(opponentHand);
+                        value = h1.beats(h2);
                         if (value == 1)
                             wins++;
                         else if (value == 0)

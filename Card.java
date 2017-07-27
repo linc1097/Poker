@@ -24,6 +24,7 @@ public class Card
 
     private int suit;
     private int rank;
+    private int prime;
     /**
      * takes the int values of rank and suit, and initializes the CardSheet, which holds a picture of all
      * the cards in the deck
@@ -32,8 +33,14 @@ public class Card
     {
         suit = theSuit;
         rank = theRank;
+        prime = primeRep(rank);
     }
-
+    
+    public int primeRep(int x)
+    {
+        return Game.primes[x];
+    }
+    
     /**
      * returns the value in blackjack(face cards are 10)(Aces are always one) for a card
      */
@@ -45,6 +52,11 @@ public class Card
     public void setRank(int theRank)
     {
         rank = theRank;
+    }
+    
+    public int getPrime()
+    {
+        return prime;
     }
     
     /**
