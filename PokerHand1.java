@@ -52,7 +52,7 @@ public class PokerHand1
     {
 
         int a;
-        /*
+        
         int b;
         List<Card> hand = new ArrayList<Card>();
         Card c1 = new Card(1,2);
@@ -64,13 +64,14 @@ public class PokerHand1
         hand.add(c2);
         hand.add(c3);
         hand.add(c4);
-        hand.add(c5);*/
+        hand.add(c5);
         double time = System.currentTimeMillis();
         for (int x = 0;x<9000000/4*21;x++)
         {
             //HandToInt z = new HandToInt(hand);
             //b = z.numValue();
-            a = map.get(48);
+            if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(3),hand.get(4)))
+                ;
             if (x%(90000*21/4)==0)
                 System.out.println(x/(21*90000/4));
         }
@@ -113,7 +114,7 @@ public class PokerHand1
         return high;
     }
 
-    public int handValue(List<Card> hand)
+    public int hValue(List<Card> hand)
     {
         high = 0;
         for (int a = 0;a<3;a++)
@@ -149,17 +150,170 @@ public class PokerHand1
         return high;
     }
 
+    public int handValue(List<Card> hand)
+    {
+        high = 0;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime();
+        if (hasFlush(hand.get(1),hand.get(2),hand.get(3),hand.get(4),hand.get(0)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(5).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(3),hand.get(5)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(3),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(4),hand.get(5)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(4).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(4),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(3),hand.get(4),hand.get(5)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(3),hand.get(4),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(3).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(3),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(1),hand.get(4),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime();
+        if (hasFlush(hand.get(0),hand.get(2),hand.get(3),hand.get(4),hand.get(5)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(2),hand.get(3),hand.get(4),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(2),hand.get(3),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(2).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(2),hand.get(4),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(0).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(0),hand.get(3),hand.get(4),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime();
+        if (hasFlush(hand.get(1),hand.get(2),hand.get(3),hand.get(4),hand.get(5)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(1),hand.get(2),hand.get(3),hand.get(4),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(1),hand.get(2),hand.get(3),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(1),hand.get(2),hand.get(4),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(1).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(1),hand.get(3),hand.get(4),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        v = hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime()*hand.get(5).getPrime()*hand.get(6).getPrime();
+        if (hasFlush(hand.get(2),hand.get(3),hand.get(4),hand.get(5),hand.get(6)))
+            v*=43;
+        val = rankOfHand(v);
+        if (val>high)
+            high = val;
+        return high;
+    }
+    
+    public void printNums()
+    {
+        for (int a = 0;a<3;a++)
+        {
+            for (int b = a+1;b<4;b++)
+            {
+                for (int c = b+1;c<5;c++)
+                {
+                    for (int d = c+1;d<6;d++)
+                    {
+                        for (int e = d+1;e<7;e++)
+                        {
+                            System.out.println("v = hand.get("+ a +").getPrime()*hand.get("+b+").getPrime()*hand.get("
+                                +c+").getPrime()*hand.get("+d+").getPrime()*hand.get("+e+").getPrime()");                        }
+                    }
+                }
+            }
+        }
+    }
+
     public int rankOfHand(int val)
     {
         int x = array[(val%(2*1024*1024))];
         if (x == 0)
-        return map.get(val);
+            return map.get(val);
         else
             return x;
     }
 
     public boolean hasFlush(Card a,Card b,Card c,Card d,Card e)
     {
-        return a.getSuit()==b.getSuit()&&b.getSuit()==c.getSuit()&&c.getSuit()==d.getSuit()&&d.getSuit()==e.getSuit();
+        int x = (a.getSuit() | b.getSuit() | c.getSuit() | d.getSuit() | e.getSuit());
+        return (x!=0 && (x&(x-1))==0);
     }
 }
