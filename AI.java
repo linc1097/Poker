@@ -104,10 +104,12 @@ public class AI extends Player
                             for (int d = c;d<x.size();d++)
                             {
                                 opponentHand.set(1,x.get(d));
-                                //value = evaluator.winner(hand,opponentHand);
+                                value = evaluator.winner(hand,opponentHand);
+                                /*
                                 PokerHand h1 = new PokerHand(hand);
                                 PokerHand h2 = new PokerHand(opponentHand);
                                 value = h1.beats(h2);
+                                */
                                 if (value == 1)
                                     wins++;
                                 else if (value == 0)
@@ -149,9 +151,7 @@ public class AI extends Player
                         for (int d = c;d<x.size();d++)
                         {
                             opponentHand.set(1,x.get(d));
-                            PokerHand h1 = new PokerHand(hand);
-                            PokerHand h2 = new PokerHand(opponentHand);
-                            value = h1.beats(h2);
+                            value = evaluator.winner(hand,opponentHand);
                             if (value == 1)
                                 wins++;
                             else if (value == 0)
@@ -183,9 +183,7 @@ public class AI extends Player
                     for (int d = c;d<x.size();d++)
                     {
                         opponentHand.set(1,x.get(d));
-                        PokerHand h1 = new PokerHand(hand);
-                        PokerHand h2 = new PokerHand(opponentHand);
-                        value = h1.beats(h2);
+                        value = evaluator.winner(hand,opponentHand);
                         if (value == 1)
                             wins++;
                         else if (value == 0)

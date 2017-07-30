@@ -175,7 +175,7 @@ public class MakeMap
     public static int[] makeArray()
     {
         int[] array = new int[2096696];
-        int[] repeats = new int[5];
+        int[] repeats = new int[100];
         for (int x = 0;x<hands.length;x++)
         {
             int mod = hands[x]%(1024*1024*2);
@@ -203,7 +203,7 @@ public class MakeMap
         }
     }
 
-    public boolean contains(int x,int[] array)
+    public static boolean contains(int x,int[] array)
     {
         for (int i = 0;i<array.length;i++)
         {
@@ -211,5 +211,15 @@ public class MakeMap
                 return true;
         }
         return false;
+    }
+
+    public void testHandArray()
+    {
+        for (int x = 0;x<hands.length;x++)
+        {
+            if (hands[x] == 42570)
+                System.out.println("YAY");
+        }
+        System.out.println("NO");
     }
 }

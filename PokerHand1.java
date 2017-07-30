@@ -66,14 +66,14 @@ public class PokerHand1
         hand.add(c4);
         hand.add(c5);
         double time = System.currentTimeMillis();
-        for (int x = 0;x<9000000/4*21;x++)
+        for (int x = 0;x<9000000/8*21;x++)
         {
             //HandToInt z = new HandToInt(hand);
             //b = z.numValue();
             if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(3),hand.get(4)))
                 ;
-            if (x%(90000*21/4)==0)
-                System.out.println(x/(21*90000/4));
+            if (x%(90000*21/8)==0)
+                System.out.println(x/(21*90000/8));
         }
         System.out.println((System.currentTimeMillis() - time));
     }
@@ -114,7 +114,7 @@ public class PokerHand1
         return high;
     }
 
-    public int hValue(List<Card> hand)
+    public int handValue(List<Card> hand)
     {
         high = 0;
         for (int a = 0;a<3;a++)
@@ -150,7 +150,7 @@ public class PokerHand1
         return high;
     }
 
-    public int handValue(List<Card> hand)
+    public int handV(List<Card> hand)
     {
         high = 0;
         v = hand.get(0).getPrime()*hand.get(1).getPrime()*hand.get(2).getPrime()*hand.get(3).getPrime()*hand.get(4).getPrime();
@@ -302,18 +302,20 @@ public class PokerHand1
         }
     }
 
-    public int rankOfHand(int val)
+    public int rankOfHand(int num)
     {
-        int x = array[(val%(2*1024*1024))];
+        int x = array[(num%(2*1024*1024))];
         if (x == 0)
-            return map.get(val);
+        {    
+            return map.get(num);
+        }
         else
             return x;
     }
 
     public boolean hasFlush(Card a,Card b,Card c,Card d,Card e)
     {
-        int x = (a.getSuit() | b.getSuit() | c.getSuit() | d.getSuit() | e.getSuit());
-        return (x!=0 && (x&(x-1))==0);
+        int x = a.getSuit();
+        return x==b.getSuit()&&x==c.getSuit()&&x==d.getSuit()&&x==d.getSuit();
     }
 }

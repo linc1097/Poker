@@ -11,7 +11,7 @@ public class Deck
     //number of cards in a deck
     final int NUM_CARDS = 52;
     //number of suits in a deck of cards
-    final int NUM_SUITS = 8;
+    final int NUM_SUITS = 4;
     //number of ranks in a deck of cards
     final int NUM_RANKS = 14;
     final int SHUFFLE_NUMB = 500;
@@ -49,7 +49,7 @@ public class Deck
      */
     public void setAllCards()
     {
-        for (int suit = 1;suit<=NUM_SUITS;suit*=2)
+        for (int suit = 1;suit<=NUM_SUITS;suit++)
         {
             for (int num = 2;num<=NUM_RANKS;num++)
             {
