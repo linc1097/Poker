@@ -40,8 +40,9 @@ public class Game extends Canvas implements Runnable
     private static boolean handDone = false;
 
     public static Player user = new Player(NUM_CHIPS);
-    public static AI cpu = new AI(NUM_CHIPS);
+    public static AI cpu = new AI(NUM_CHIPS,.5,.5);
     private static Player[] players;
+    private CardSheet cardSheet = new CardSheet();
     //how many hands have been played
     private static int handCount = 1;
 
@@ -120,7 +121,6 @@ public class Game extends Canvas implements Runnable
     public static STATE State = STATE.MENU;
 
     private BufferedImage image = new BufferedImage(WIDTH/2,HEIGHT/2,BufferedImage.TYPE_INT_RGB);
-    private CardSheet cardSheet;
     /**
      * initializes the picture of the cardback and the creates a mouse listener to take input from the mouse
      * of the user
@@ -255,10 +255,12 @@ public class Game extends Canvas implements Runnable
         {
             players[x].alreadyIn = 0;
         }
-        user.set(0,cards.get(0));
-        user.set(1,cards.get(1));
-        cpu.set(0,cards.get(7));
-        cpu.set(1,cards.get(8));
+        user.clearCards();
+        cpu.clearCards();
+        user.addCard(cards.get(0));
+        user.addCard(cards.get(1));
+        cpu.addCard(cards.get(7));
+        cpu.addCard(cards.get(8));
         flopDone = false;
         turnDone = false;
         riverDone = false;
@@ -431,17 +433,17 @@ public class Game extends Canvas implements Runnable
         {
             for (int x = 0;x<players.length;x++)
             {
-                players[x].set(2,cards.get(2));
-                players[x].set(3,cards.get(3));
-                players[x].set(4,cards.get(4));
+                players[x].addCard(cards.get(2));
+                players[x].addCard(cards.get(3));
+                players[x].addCard(cards.get(4));
             }
             flopDone = true;
             if (State != STATE.ALL_IN)
                 newTurn();
         }
-        g.drawImage(cards.get(2).getCard(),(int)FLOP_1.getWidth(),(int)FLOP_1.getHeight(),this);
-        g.drawImage(cards.get(3).getCard(),(int)FLOP_2.getWidth(),(int)FLOP_2.getHeight(),this);
-        g.drawImage(cards.get(4).getCard(),(int)FLOP_3.getWidth(),(int)FLOP_3.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(2)),(int)FLOP_1.getWidth(),(int)FLOP_1.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(3)),(int)FLOP_2.getWidth(),(int)FLOP_2.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(4)),(int)FLOP_3.getWidth(),(int)FLOP_3.getHeight(),this);
     }
 
     /**
@@ -453,13 +455,13 @@ public class Game extends Canvas implements Runnable
         {
             for (int x = 0;x<players.length;x++)
             {
-                players[x].set(5,cards.get(5));
+                players[x].addCard(cards.get(5));
             }
             turnDone = true;
             if (State != STATE.ALL_IN)
                 newTurn();
         }
-        g.drawImage(cards.get(5).getCard(),(int)TURN_DIMENSION.getWidth(),(int)TURN_DIMENSION.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(5)),(int)TURN_DIMENSION.getWidth(),(int)TURN_DIMENSION.getHeight(),this);
     }
 
     /**
@@ -471,13 +473,13 @@ public class Game extends Canvas implements Runnable
         {
             for (int x = 0;x<players.length;x++)
             {
-                players[x].set(6,cards.get(6));
+                players[x].addCard(cards.get(6));
             }
             riverDone = true;
             if (State != STATE.ALL_IN)
                 newTurn();
         }
-        g.drawImage(cards.get(6).getCard(),(int)RIVER_DIMENSION.getWidth(),(int)RIVER_DIMENSION.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(6)),(int)RIVER_DIMENSION.getWidth(),(int)RIVER_DIMENSION.getHeight(),this);
     }
 
     /**
@@ -611,9 +613,14 @@ public class Game extends Canvas implements Runnable
     {
         if (!handDone)
         {
-            PokerHand u = new PokerHand(user.getCards());
-            PokerHand c = new PokerHand(cpu.getCards());
+            PokerHandOriginal u = new PokerHandOriginal(user.getCards());
+            PokerHandOriginal c = new PokerHandOriginal(cpu.getCards());
             winner = u.beats(c);
+            System.out.println(cards);
+            System.out.println(cpu.getCards());
+            System.out.println(user.getCards());
+            cpu.showOpponentCards(cards.get(0),cards.get(1));
+            user.showOpponentCards(cards.get(7),cards.get(8));
         }
         Font fnt1 = new Font("arial", Font.BOLD,(int)(50*FONT_SCALE));
         g.setFont(fnt1);
@@ -657,8 +664,8 @@ public class Game extends Canvas implements Runnable
     {
         drawButtons(g);
         displayChips(g);
-        g.drawImage(cards.get(0).getCard(),(int)P_1.getWidth(),(int)P_1.getHeight(),this);
-        g.drawImage(cards.get(1).getCard(),(int)P_2.getWidth(),(int)P_2.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(0)),(int)P_1.getWidth(),(int)P_1.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(1)),(int)P_2.getWidth(),(int)P_2.getHeight(),this);
         if (State != STATE.ALL_IN && (user.chips == 0 || cpu.chips == 0))
         {
             if (user.call && cpu.call)
@@ -732,8 +739,8 @@ public class Game extends Canvas implements Runnable
             {
                 if (System.currentTimeMillis() - newStageTime > 2000)
                 {
-                    g.drawImage(cards.get(7).getCard(),(int)O_1.getWidth(),(int)O_1.getHeight(),this);
-                    g.drawImage(cards.get(8).getCard(),(int)O_2.getWidth(),(int)O_2.getHeight(),this);
+                    g.drawImage(cardSheet.getCardImage(cards.get(7)),(int)O_1.getWidth(),(int)O_1.getHeight(),this);
+                    g.drawImage(cardSheet.getCardImage(cards.get(8)),(int)O_2.getWidth(),(int)O_2.getHeight(),this);
                     findWinner(g);
                 }
                 else
@@ -744,8 +751,8 @@ public class Game extends Canvas implements Runnable
             }
             else
             {
-                g.drawImage(cards.get(7).getCard(),(int)O_1.getWidth(),(int)O_1.getHeight(),this);
-                g.drawImage(cards.get(8).getCard(),(int)O_2.getWidth(),(int)O_2.getHeight(),this);
+                g.drawImage(cardSheet.getCardImage(cards.get(7)),(int)O_1.getWidth(),(int)O_1.getHeight(),this);
+                g.drawImage(cardSheet.getCardImage(cards.get(8)),(int)O_2.getWidth(),(int)O_2.getHeight(),this);
                 findWinner(g);
             }
         }
@@ -762,10 +769,10 @@ public class Game extends Canvas implements Runnable
     {
         drawButtons(g);
         displayChips(g);
-        g.drawImage(cards.get(0).getCard(),(int)P_1.getWidth(),(int)P_1.getHeight(),this);
-        g.drawImage(cards.get(1).getCard(),(int)P_2.getWidth(),(int)P_2.getHeight(),this);
-        g.drawImage(cards.get(7).getCard(),(int)O_1.getWidth(),(int)O_1.getHeight(),this);
-        g.drawImage(cards.get(8).getCard(),(int)O_2.getWidth(),(int)O_2.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(0)),(int)P_1.getWidth(),(int)P_1.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(1)),(int)P_2.getWidth(),(int)P_2.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(7)),(int)O_1.getWidth(),(int)O_1.getHeight(),this);
+        g.drawImage(cardSheet.getCardImage(cards.get(8)),(int)O_2.getWidth(),(int)O_2.getHeight(),this);
         if (stage > 2)//flop
         {
             flop(g);

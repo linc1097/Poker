@@ -53,7 +53,7 @@ public class TestPokerHand
         hand.add(d);
         Card e = new Card(1,2);
         hand.add(e);
-        PokerHand p = new PokerHand(hand);
+        PokerHandOriginal p = new PokerHandOriginal(hand);
         int x = p.hasWhat();
         System.out.println(x);
     }
@@ -72,7 +72,7 @@ public class TestPokerHand
             hand.clear();
             for (int y = 0;y<7;y++)
                 hand.add(deck.dealCard());
-            PokerHand i = new PokerHand(hand);
+            PokerHandOriginal i = new PokerHandOriginal(hand);
             handVal = i.hasWhat();
             if (handVal == 9)
                 SF++;
@@ -144,8 +144,8 @@ public class TestPokerHand
                     for (int d = 0;d<x.size();d++)
                     {
                         hand2.set(6,x.get(d));
-                        PokerHand self = new PokerHand(hand1);
-                        PokerHand opponent = new PokerHand(hand2);
+                        PokerHandOriginal self = new PokerHandOriginal(hand1);
+                        PokerHandOriginal opponent = new PokerHandOriginal(hand2);
                         value = self.beats(opponent);
                         if (value == 1)
                             wins++;

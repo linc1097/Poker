@@ -13,17 +13,180 @@ public class AI extends Player
 {
     private int numRaises = 0;
     private Map<StartingHand, Double> map = new HashMap<StartingHand, Double>();
-    private List<Card> opponentHand = new ArrayList<Card>();
-    private PokerHand1 evaluator = new PokerHand1();
-    public AI(int numChips)
+    private Card[] opponentHand= new Card[7];
+    private PokerHandFast evaluator = new PokerHandFast();
+    double aggressive;
+    double tight;
+    public AI(int numChips, double a, double t)
     {
         super(numChips);
         initMap();
-        Card card = new Card(2,2);
-        for (int x = 0;x<7;x++)
+        aggressive = a;
+        tight = t;
+    }
+
+    public double winPercentage()
+    {
+        if (AIvAI.stage == AIvAI.PRE_FLOP)
         {
-            opponentHand.add(card);
+            Card c1 = hand[0];
+            Card c2 = hand[1];
+            return map.get(new StartingHand(c1.getRank(),c2.getRank(),c1.getSuit() == c2.getSuit()));
         }
+        else
+        {
+            int value;
+            int wins = 0;
+            int loses = 0;
+            int ties = 0;
+            int count = 0;
+            Deck deck = new Deck();
+            deck.setInOrder();
+            if (AIvAI.stage == AIvAI.FLOP)
+            {
+                for (int x = 2;x<5;x++)
+                {
+                    opponentHand[x] = hand[x];
+                }
+                for (int x = 0;x<5;x++)
+                {
+                    deck.remove(hand[x]);
+                }
+                for (int a = 0;a<deck.size()-1;a++)
+                {
+                    hand[5] = deck.get(a);
+                    opponentHand[5] = deck.get(a);
+                    List<Card> z = clone(deck.getDeck());
+                    z.remove(a);
+                    for (int b = a+1;b<z.size();b++)
+                    {
+                        hand[6] = z.get(b);
+                        opponentHand[6] = z.get(b);
+                        List<Card> y = clone(z);
+                        y.remove(b);
+                        for (int c = 0;c<y.size()-1;c++)
+                        {
+                            opponentHand[0] = y.get(c);
+                            List<Card> x = clone(y);
+                            x.remove(c);
+                            for (int d = c+1;d<x.size();d++)
+                            {
+                                if (different(a,b,c,d))
+                                {
+                                    opponentHand[1] = x.get(d);
+                                    value = evaluator.winner(hand,opponentHand);
+                                    if (value == 1)
+                                        wins++;
+                                    else if (value == 0)
+                                        loses++;
+                                    else
+                                        ties++;
+                                    count ++;
+                                }
+                            }
+                        }
+                    }
+                }
+                System.out.println("wins: " +(double)wins/count); 
+                hand[5] = null;
+                hand[6] = null;
+                return (double)wins/count*100;
+            }
+            else if (AIvAI.stage == AIvAI.TURN)
+            {
+                for (int x = 2;x<6;x++)
+                {
+                    opponentHand[x] = hand[x];
+                }
+                for (int x = 0;x<6;x++)
+                {
+                    deck.remove(hand[x]);
+                }
+                for (int b = 0;b<deck.size();b++)
+                {
+                    hand[6] = deck.get(b);
+                    opponentHand[6] = deck.get(b);
+                    List<Card> y = clone(deck.getDeck());
+                    y.remove(b);
+                    for (int c = 0;c<y.size()-1;c++)
+                    {
+                        opponentHand[0] = y.get(c);
+                        List<Card> x = clone(y);
+                        x.remove(c);
+                        for (int d = c+1;d<x.size();d++)
+                        {
+                            if (different(b,c,d))
+                            {
+                                opponentHand[1] = x.get(d);
+                                value = evaluator.winner(hand,opponentHand);
+                                if (value == 1)
+                                    wins++;
+                                else if (value == 0)
+                                    loses++;
+                                else
+                                    ties++;
+                                count++;
+                            }
+                        }
+                    }
+                }
+                System.out.println("wins: " +(double)wins/count); 
+                hand[6] = null;
+                return (double)wins/count*100;
+            }
+            else if (AIvAI.stage == AIvAI.RIVER)
+            {
+                for (int x = 2;x<7;x++)
+                {
+                    opponentHand[x] = hand[x];
+                }
+                for (int x = 0;x<7;x++)
+                {
+                    deck.remove(hand[x]);
+                }
+                for (int c = 0;c<deck.size()-1;c++)
+                {
+                    opponentHand[0] = deck.get(c);
+                    List<Card> x = clone(deck.getDeck());
+                    x.remove(c);
+                    for (int d = c+1;d<x.size();d++)
+                    {
+                        opponentHand[1] = x.get(d);
+                        value = evaluator.winner(hand,opponentHand);
+                        if (value == 1)
+                            wins++;
+                        else if (value == 0)
+                            loses++;
+                        else
+                            ties++;
+                        count++;
+                    }
+                }
+                System.out.println("wins: " +(double)wins/count); 
+                return (double)wins/count*100;
+            }
+            return 0;
+        }
+    }
+
+    public boolean different(int a, int b, int c, int d)
+    {
+        return a!=b && a!=c && a!=d && b!=c &&b!=d &&c!=d;
+    }
+
+    public boolean different (int b, int c, int d)
+    {
+        return b!=c &&b!=d &&c!=d;
+    }
+
+    public List<Card> clone (List<Card> cards)
+    {
+        List<Card> list = new ArrayList<Card>();
+        for (int i = 0;i<cards.size();i++)
+        {
+            list.add(cards.get(i));
+        }
+        return list;
     }
 
     public int roundTen(double num)
@@ -55,364 +218,50 @@ public class AI extends Player
         return ((int)(Math.random()*(max/div)+(min/div)))*div;
     }
 
-    public double winPercentage()
-    {
-        if (Game.stage == Game.PRE_FLOP)
-        {
-            Card c1 = hand.get(0);
-            Card c2 = hand.get(1);
-            return map.get(new StartingHand(c1.getRank(),c2.getRank(),c1.getSuit() == c2.getSuit()));
-        }
-        else
-        {
-            int value;
-            int wins = 0;
-            int loses = 0;
-            int ties = 0;
-            int count = 0;
-            Deck deck = new Deck();
-            deck.setInOrder();
-            double time;
-            if (Game.stage == Game.FLOP)
-            {
-                time = System.currentTimeMillis();
-                for (int x = 2;x<5;x++)
-                {
-                    opponentHand.set(x,hand.get(x));
-                }
-                for (int x = 0;x<5;x++)
-                {
-                    deck.remove(hand.get(x));
-                }
-                for (int a = 0;a<deck.size();a++)
-                {
-                    hand.set(5,deck.get(a));
-                    opponentHand.set(5,deck.get(a));
-                    List<Card> z = clone(deck.getDeck());
-                    z.remove(a);
-                    for (int b = a;b<z.size();b++)
-                    {
-                        hand.set(6,z.get(b));
-                        opponentHand.set(6,z.get(b));
-                        List<Card> y = clone(z);
-                        y.remove(b);
-                        for (int c = 0;c<y.size();c++)
-                        {
-                            opponentHand.set(0,y.get(c));
-                            List<Card> x = clone(y);
-                            x.remove(c);
-                            for (int d = c;d<x.size();d++)
-                            {
-                                opponentHand.set(1,x.get(d));
-                                value = evaluator.winner(hand,opponentHand);
-                                /*
-                                PokerHand h1 = new PokerHand(hand);
-                                PokerHand h2 = new PokerHand(opponentHand);
-                                value = h1.beats(h2);
-                                */
-                                if (value == 1)
-                                    wins++;
-                                else if (value == 0)
-                                    loses++;
-                                else
-                                    ties++;
-                                if (count % (42807/4) == 0)
-                                    System.out.println(count/(42807/4));
-                                count++;
-                            }
-                        }
-                    }
-                }
-                System.out.println((System.currentTimeMillis() - time));
-                System.out.println("wins: " +(double)wins/count); 
-                return (double)wins/count*100;
-            }
-            else if (Game.stage == Game.TURN)
-            {
-                for (int x = 2;x<6;x++)
-                {
-                    opponentHand.set(x,hand.get(x));
-                }
-                for (int x = 0;x<6;x++)
-                {
-                    deck.remove(hand.get(x));
-                }
-                for (int b = 0;b<deck.size();b++)
-                {
-                    hand.set(6,deck.get(b));
-                    opponentHand.set(6,deck.get(b));
-                    List<Card> y = clone(deck.getDeck());
-                    y.remove(b);
-                    for (int c = 0;c<y.size();c++)
-                    {
-                        opponentHand.set(0,y.get(c));
-                        List<Card> x = clone(y);
-                        x.remove(c);
-                        for (int d = c;d<x.size();d++)
-                        {
-                            opponentHand.set(1,x.get(d));
-                            value = evaluator.winner(hand,opponentHand);
-                            if (value == 1)
-                                wins++;
-                            else if (value == 0)
-                                loses++;
-                            else
-                                ties++;
-                            count++;
-                        }
-                    }
-                }
-                System.out.println("wins: " +(double)wins/count); 
-                return (double)wins/count*100;
-            }
-            else if (Game.stage == Game.RIVER)
-            {
-                for (int x = 2;x<7;x++)
-                {
-                    opponentHand.set(x,hand.get(x));
-                }
-                for (int x = 0;x<7;x++)
-                {
-                    deck.remove(hand.get(x));
-                }
-                for (int c = 0;c<deck.size();c++)
-                {
-                    opponentHand.set(0,deck.get(c));
-                    List<Card> x = clone(deck.getDeck());
-                    x.remove(c);
-                    for (int d = c;d<x.size();d++)
-                    {
-                        opponentHand.set(1,x.get(d));
-                        value = evaluator.winner(hand,opponentHand);
-                        if (value == 1)
-                            wins++;
-                        else if (value == 0)
-                            loses++;
-                        else
-                            ties++;
-                        count++;
-                    }
-                }
-                System.out.println("wins: " +(double)wins/count); 
-                return (double)wins/count*100;
-            }
-            return 0;
-        }
-    }
-
-    public List<Card> clone (List<Card> cards)
-    {
-        List<Card> list = new ArrayList<Card>();
-        for (int i = 0;i<cards.size();i++)
-        {
-            list.add(cards.get(i));
-        }
-        return list;
-    }
-
     public void actPreFlop()
     {
         double percentWin = winPercentage();
-        System.out.println(percentWin/100);
-        if (Game.bet == 20 && this.alreadyIn == 10)
-        {
-            if (percentWin > 60)
-            {
-                if (randBool(percentWin/100.0 + .2))
-                {
-                    int min = roundTen(percentWin - 50);
-                    int max = min + 30;
-                    raise(randInt(min,max,10));
-                    numRaises++;
-                }
-                else
-                    call();
-            }
-            else if (percentWin > 44)
-            {
-                if (randBool(.17))
-                {
-                    raise(randInt(10,20,10));
-                    numRaises++;
-                }
-                else if (percentWin < 50 && randBool(.4))
-                    fold();
-                else
-                    call();
-            }
-            else
-                fold();
-        }
-        else if (Game.bet > 20)
-        {
-            numRaises++;
-            if (percentWin > 63)
-            {
-                if (randBool(percentWin/100 - .35))
-                {
-                    raise(Game.bet - this.alreadyIn + (randInt(0,Game.bet - this.alreadyIn,2)));
-                    numRaises++;
-                }
-                else
-                {
-                    call();
-                }
-            }
-            else if (percentWin > 44)
-            {
-                if (randBool((percentWin/100 - .45)*5))
-                {
-                    if (randBool(.15))
-                    {
-                        raise(20);
-                        numRaises++;
-                    }
-                    else
-                        call();
-                }
-                else
-                {
-                    fold();
-                }
-            }
-            else
-                fold();
-        }
-        else
-        {
-            if (percentWin > 59)
-            {
-                if (randBool(.75))
-                {
-                    int min = roundTen(percentWin) - 60;
-                    raise(randInt(min,min+20,10));
-                    numRaises++;
-                }
-                else
-                    call();
-            }
-            else if (percentWin > 42)
-            {
-                if (randBool(percentWin/100 -.33))
-                {
-                    raise(randInt(10,20,10));
-                    numRaises++;
-                }
-                else
-                {
-                    call();
-                }
-            }
-            else
-                call();
-        }
+        call();
     }
 
     public void actFlop()
     {
         double percentWin = winPercentage();
-        if (Game.bet != 0)
-        {
-            if (percentWin > 75)
-            {
-                if (randBool(.5))
-                    raise(randInt(roundTen(Game.pot/2),roundTen(Game.pot*1.5),10));
-                else if (randBool(.85))
-                    raise(randInt(10,30,10));
-                else
-                    call();
-            }
-            else if (percentWin > 50)
-            {
-                if (randBool(.6))
-                {
-                    call();
-                }
-                else if (randBool(.83))
-                {
-                    raise(randInt(10,20,10));
-                }
-                else
-                {
-                    raise(randInt(roundTen(Game.pot/2),roundTen(Game.pot*1.5),10));
-                }
-            }
-            else
-            {
-                fold();
-            }
-        }
-        else
-        {
-            if (percentWin > 60)
-            {
-                if (randBool(.7))
-                {
-                    raise(randInt(roundTen(Game.pot/2),roundTen(Game.pot*1.5),10));
-                }
-                else if (randBool(.7))
-                {
-                    raise(randInt(10,20,10));
-                }
-                else
-                {
-                    call();
-                }
-            }
-            else if (percentWin > 50)
-            {
-                if (randBool(.65))
-                {
-                    raise(randInt(10,30,10));
-                }
-                else if (randBool(.15))
-                {
-                    raise(randInt(roundTen(Game.pot/2),roundTen(Game.pot*1.5),10));
-                }
-                else
-                {
-                    call();
-                }
-            }
-            else
-            {
-                if (randBool(.1))
-                {
-                    raise(randInt(10,30,10));
-                }
-                else
-                {
-                    call();
-                }
-            }
-        }
+        call();
     }
 
     public void actTurn()
     {
-        actFlop();
+        double percentWin = winPercentage();
+        call();
     }
 
     public void actRiver()
     {
-        actFlop();
+        double percentWin = winPercentage();
+        call();
+    }
+    
+    public void showOpponentCards(Card c1,Card c2)
+    {
+        super.showOpponentCards(c1,c2);
     }
 
     public void act()
     {
-        if (Game.stage == Game.PRE_FLOP)
+        if (AIvAI.stage == AIvAI.PRE_FLOP)
         {
             actPreFlop();
         }
-        else if (Game.stage == Game.FLOP)
+        else if (AIvAI.stage == AIvAI.FLOP)
         {
             actFlop();
         }
-        else if (Game.stage == Game.TURN)
+        else if (AIvAI.stage == AIvAI.TURN)
         {
             actTurn();
         }
-        else if (Game.stage == Game.RIVER)
+        else if (AIvAI.stage == AIvAI.RIVER)
         {
             actRiver();
         }
@@ -420,6 +269,11 @@ public class AI extends Player
         {
             call();
         }
+    }
+    
+    public String toString()
+    {
+        return "" + chips;
     }
 
     public void initMap()

@@ -141,8 +141,8 @@ public class MakeArray
             int beats = 100;
             while (check!=bottom&&beats!=2)
             {
-                PokerHand a = new PokerHand(hand.getCards());
-                PokerHand b = new PokerHand(hands.get(check).getCards());
+                PokerHandOriginal a = new PokerHandOriginal(hand.getCards());
+                PokerHandOriginal b = new PokerHandOriginal(hands.get(check).getCards());
                 beats = a.beats(b);
                 if (beats == 0)
                 {
@@ -156,8 +156,8 @@ public class MakeArray
             }
             if (check==bottom)
             {
-                PokerHand a = new PokerHand(hand.getCards());
-                PokerHand b = new PokerHand(hands.get(check).getCards());
+                PokerHandOriginal a = new PokerHandOriginal(hand.getCards());
+                PokerHandOriginal b = new PokerHandOriginal(hands.get(check).getCards());
                 beats = a.beats(b);
                 if (beats == 0)
                 {

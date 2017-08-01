@@ -57,8 +57,8 @@ public class TestBeats
             Card b3  = new Card(m.get(hands.charAt(idx+1)), m.get(hands.charAt(idx))); idx += 2;
             Card b4  = new Card(m.get(hands.charAt(idx+1)), m.get(hands.charAt(idx))); idx += 2;
             Card b5  = new Card(m.get(hands.charAt(idx+1)), m.get(hands.charAt(idx))); idx += 2;
-            PokerHand pl = new PokerHand(new ArrayList<Card>(Arrays.asList(pl1, pl2, b1, b2, b3, b4, b5)));
-            PokerHand ai = new PokerHand(new ArrayList<Card>(Arrays.asList(ai1, ai2, b1, b2, b3, b4, b5)));
+            PokerHandOriginal pl = new PokerHandOriginal(new ArrayList<Card>(Arrays.asList(pl1, pl2, b1, b2, b3, b4, b5)));
+            PokerHandOriginal ai = new PokerHandOriginal(new ArrayList<Card>(Arrays.asList(ai1, ai2, b1, b2, b3, b4, b5)));
             int result = pl.beats(ai);
             int expected = Integer.parseInt(Character.toString(hands.charAt(idx)));
             if (result != expected) {

@@ -19,8 +19,6 @@ public class Card
     final static int QUEEN = 12;
     final static int JACK = 11;
     final static int TEN = 10,NINE = 9,EIGHT = 8,SEVEN = 7,SIX = 6,FIVE = 5,FOUR = 4,THREE = 3,TWO = 2;
-    
-    private CardSheet cards = new CardSheet();
 
     private int suit;
     private int rank;
@@ -135,13 +133,7 @@ public class Card
     {
         return getStringRank() + getStringSuit();
     }
-    /**
-     * returns an image of the card with the correct suit and rank
-     */
-    public BufferedImage getCard()
-    {        
-       return cards.grabCardImage(rank,suit);
-    }
+
     /**
      * returns a clone of the card
      */

@@ -9,7 +9,8 @@ import java.util.Collections;
  */
 public class Player
 {
-    protected List<Card> hand = new ArrayList<Card>();
+    protected Card[] hand = new Card[7];
+    protected Card[] opponentHole = new Card[2];
     public int chips;
     public boolean isTurn = false;
     public boolean call = false;
@@ -19,34 +20,43 @@ public class Player
     public int alreadyIn = 0;
 
     /**
-     * Constructor for objects of class Player, takes the two cards the player is dealt to start the hand
+     * Constructor for objects of class Player, takes the starting amount of chips
      */
     public Player(int num)
     {
         chips = num;
-        Card card = new Card(2,2);
-        for (int x = 0;x<7;x++)
-        {
-            hand.add(card);
-        }
     }
 
     /**
-     * adds the card to the hand
+     * adds the card to the hand, if already 7 cards in hand, does nothing
      */
-    public void add(Card card)
+    public void addCard(Card card)
     {
-        hand.add(card);
+        for (int x = 0;x<hand.length;x++)
+        {
+            if (hand[x] == null)
+            {
+                hand[x] = card;
+                return;
+            }
+        }
+    }
+    
+    public void showOpponentCards(Card c1, Card c2)
+    {
+        opponentHole[0] = c1;
+        opponentHole[1] = c2;
     }
 
     public void set(int index, Card card)
     {
-        hand.set(index,card);
+        hand[index] = card;
     }
 
     public void clearCards()
     {
-        hand.clear();
+        for (int x = 0;x<hand.length;x++)
+        hand[x] = null;
     }
 
     /**
@@ -55,9 +65,9 @@ public class Player
     public List<Card> getCards()
     {
         List<Card> x = new ArrayList<Card>();
-        for (int i = 0;i<hand.size();i++)
+        for (int i = 0;i<hand.length;i++)
         {
-            x.add(hand.get(i).clone());
+            x.add(hand[i].clone());
         }
         return x;
     }
@@ -80,12 +90,12 @@ public class Player
 
     public void raise(int amount)
     {
-        if (chips <= Game.bet || Game.otherPlayer(this).chips <= Game.bet)
+        if (chips <= AIvAI.bet || AIvAI.otherPlayer(this).chips <= AIvAI.bet)
             call();
         else
         {
             raise = amount;
-            Game.otherPlayer(this).call = false;
+            AIvAI.otherPlayer(this).call = false;
             call = true;
         }
     }
