@@ -2,6 +2,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 /**
  * extends Player, has the ability to make decisions on what to do based on the information
  * the game provides it.
@@ -15,14 +16,73 @@ public class AI extends Player
     private Map<StartingHand, Double> map = new HashMap<StartingHand, Double>();
     private Card[] opponentHand= new Card[7];
     private PokerHandFast evaluator = new PokerHandFast();
-    double aggressive;
-    double tight;
-    public AI(int numChips, double a, double t)
+    private double aggressive;
+    private double loose;
+    private int lastStage = -1;
+    private boolean raised = false;
+    public AI(int numChips, double a, double l)
     {
         super(numChips);
         initMap();
         aggressive = a;
-        tight = t;
+        loose = l;
+    }
+
+    /**
+     * returns true if the player has 4 cards of the same suit. only to be used after flop and turn
+     */
+    public boolean flushDraw()
+    {
+        int[] suits = new int[5];
+        for (int x = 0;x<hand.length;x++)
+        {
+            if (hand[x] != null)
+            {
+                suits[hand[x].getSuit()]++;
+            }
+        }
+        for (int x = 0;x<suits.length;x++)
+        {
+            if (suits[x]==4)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * returns true if AI has 4 cards in a row, but not a straight, only works after flop and turn.
+     */
+    public boolean straightDraw()
+    {
+        int[] ranks = new int[6];
+        for (int x = 0;x<hand.length-1;x++)
+        {
+            if (hand[x]!= null)
+            {
+                ranks[x] = hand[x].getRank();
+            }
+        }
+        Arrays.sort(ranks);
+        for (int x = 0;x<3;x++)
+        {
+            int first = ranks[x];
+            for (int i = x+1;i<x+4;i++)
+            {
+                if (ranks[i] == first+1)
+                {
+                    if (i == x+3)
+                    {
+                        if (i<ranks.length-1)
+                            if (ranks[i+1] == first+2)
+                                return false;
+                        return true;
+                    }
+                    else
+                        first++;
+                }
+            }
+        }
+        return false;
     }
 
     public double winPercentage()
@@ -210,6 +270,11 @@ public class AI extends Player
         return Math.random()<percentTrue;
     }
 
+    public boolean func(double dep, double min, double range)
+    {
+        return randBool(min + range*dep);
+    }
+
     /**
      * returns a random int in the given range (inclusive) divisible by div
      */
@@ -218,10 +283,297 @@ public class AI extends Player
         return ((int)(Math.random()*(max/div)+(min/div)))*div;
     }
 
+    public double randDoub(double min,double max)
+    {
+        double num = Math.random();
+        num*=(max-min);
+        num+=min;
+        return num;
+    }
+
     public void actPreFlop()
     {
         double percentWin = winPercentage();
-        call();
+        if (raised)
+        {
+            if (AIvAI.bet>199)
+            {
+                if (percentWin>77)
+                {
+                    if (func(aggressive,.10,.30))
+                        raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                    else
+                        call();
+                }
+                else if (percentWin>60)
+                {
+                    if (func(aggressive,.0,.15))
+                        raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                    else if (func(loose,.0,.85))
+                        call();
+                    else
+                        fold();
+                }
+                else
+                {
+                    if (func(loose,.0,.50))
+                        call();
+                    else
+                        fold();
+                }
+            }
+            else if (AIvAI.bet>100)
+            {
+                if (percentWin>60&&func(aggressive,.0,.35))
+                    raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                else if (percentWin>77&&func(aggressive,20,80))
+                    raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                else if (percentWin>77)
+                    call();
+                else if (percentWin>60&&func(loose,.70,.30))
+                    call();
+                else if (percentWin>50&&func(loose,.0,.50))
+                    call();
+                else if (func(loose,0,20))
+                    call();
+                else
+                    fold();
+            }
+            else
+            {
+                if (percentWin>60&&func(aggressive,.0,.50))
+                    raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                else if (percentWin>77&&func(aggressive,.10,.60))
+                    raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                else if (percentWin>77)
+                    call();
+                else if (percentWin>60&&func(loose,.70,.30))
+                    call();
+                else if (percentWin>50&&func(loose,.0,.70))
+                    call();
+                else if (func(loose,0,20))
+                    call();
+                else
+                    fold();
+            }
+        }
+        else
+        {
+            if (AIvAI.bet == 20 && alreadyIn == 10)
+            {
+                if (percentWin>77)
+                {
+                    if (func(aggressive,.0,.90))
+                        raise(randInt(50,70,10));
+                    else if (func(aggressive,.55,.45))
+                        raise(randInt(20,30,10));
+                    else
+                        call();
+                }
+                else if (percentWin>60)
+                {
+                    if (func(aggressive,.30,.60))
+                        raise(randInt(20,40,10));
+                    else if (func(aggressive,.10,.85))
+                        raise(randInt(50,70,10));
+                    else
+                        call();
+                }
+                else if (percentWin>50)
+                {
+                    if (func(aggressive,.10,.70))
+                        raise(randInt(20,30,10));
+                    else if (func(aggressive,.0,.40))
+                        raise(randInt(50,70,10));
+                    else if (func(loose,.80,.20))
+                        call();
+                    else
+                        fold();
+                }
+                else if (percentWin>40)
+                {
+                    if (func(aggressive,.0,.30))
+                        raise(randInt(50,70,10));
+                    else if (func(aggressive,.0,.28))
+                        raise(randInt(10,30,10));
+                    else if (func(loose,.35,.70))
+                        call();
+                    else
+                        fold();
+                }
+                else
+                {
+                    if (func(aggressive,0,7))
+                        raise(randInt(10,70,10));
+                    else if (func(loose,10,80))
+                        call();
+                    else
+                        fold();
+                }
+            }
+            else if (AIvAI.bet == 20 && alreadyIn == 20)
+            {
+                if (percentWin>77)
+                {
+                    if (func(aggressive,.0,.90))
+                        raise(randInt(50,70,10));
+                    else if (func(aggressive,.55,.45))
+                        raise(randInt(20,30,10));
+                    else
+                        call();
+                }
+                else if (percentWin>60)
+                {
+                    if (func(aggressive,.30,.60))
+                        raise(randInt(20,40,10));
+                    else if (func(aggressive,.10,.85))
+                        raise(randInt(50,70,10));
+                    else
+                        call();
+                }
+                else if (percentWin>50)
+                {
+                    if (func(aggressive,.10,.70))
+                        raise(randInt(20,30,10));
+                    else if (func(aggressive,.0,.40))
+                        raise(randInt(50,70,10));
+                    else
+                        call();
+                }
+                else if (percentWin>40)
+                {
+                    if (func(aggressive,.0,.28))
+                        raise(randInt(50,70,10));
+                    else if (func(aggressive,0,28))
+                        raise(randInt(10,30,10));
+                    else
+                        call();
+                }
+                else
+                {
+                    if (func(aggressive,0,7))
+                        raise(randInt(10,70,10));
+                    else if (func(loose,10,80))
+                        call();
+                }
+            }
+            else 
+            {
+                if (AIvAI.bet>199)
+                {
+                    if (percentWin>77)
+                    {
+                        if (func(aggressive,.10,.30))
+                            raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                        else
+                            call();
+                    }
+                    else if (percentWin>60)
+                    {
+                        if (func(aggressive,.0,.15))
+                            raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                        else if (func(loose,.0,.85))
+                            call();
+                        else
+                            fold();
+                    }
+                    else
+                    {
+                        if (func(loose,.0,.40))
+                            call();
+                        else
+                            fold();
+                    }
+                }
+                else if (AIvAI.bet>69)
+                {
+                    if (percentWin>77)
+                    {
+                        if (func(aggressive,.0,.75))
+                            raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                        else
+                            call();
+                    }
+                    else if (percentWin>60)
+                    {
+                        if (func(aggressive,.0,.5))
+                            raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                        else if (func(loose,.6,.4))
+                            call();
+                        else
+                            fold();
+                    }
+                    else if (percentWin>47)
+                    {
+                        if (func(aggressive,.0,.33))
+                            raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                        else if (func(loose,.5,.5))
+                            call();
+                        else
+                            fold();
+                    }
+                    else
+                    {
+                        if (func(aggressive,.0,.12))
+                            raise(roundTen((int)(AIvAI.pot*randDoub(.6,.8))));
+                        else if (func(loose,.0,.4))
+                            call();
+                        else
+                            fold();
+                    }
+                }
+                else
+                {
+                    if (percentWin>77)
+                    {
+                        if (func(aggressive,.0,.90))
+                            raise(randInt(50,70,10));
+                        else if (func(aggressive,.55,.45))
+                            raise(randInt(20,30,10));
+                        else
+                            call();
+                    }
+                    else if (percentWin>60)
+                    {
+                        if (func(aggressive,.0,.70))
+                            raise(randInt(20,40,10));
+                        else if (func(aggressive,.0,.20))
+                            raise(randInt(50,70,10));
+                        else
+                            call();
+                    }
+                    else if (percentWin>50)
+                    {
+                        if (func(aggressive,.0,.50))
+                            raise(randInt(20,30,10));
+                        else if (func(aggressive,.0,.30))
+                            raise(randInt(50,70,10));
+                        else if (func(loose,.60,.40))
+                            call();
+                        else
+                            fold();
+                    }
+                    else if (percentWin>40)
+                    {
+                        if (func(aggressive,.0,.13))
+                            raise(randInt(10,70,10));
+                        else if (func(loose,.0,.76))
+                            call();
+                        else
+                            fold();
+                    }
+                    else
+                    {
+                        if (func(aggressive,.0,.07))
+                            raise(randInt(10,70,10));
+                        else if (func(loose,.10,.70))
+                            call();
+                        else
+                            fold();
+                    }
+                }
+            }
+        }
     }
 
     public void actFlop()
@@ -241,7 +593,7 @@ public class AI extends Player
         double percentWin = winPercentage();
         call();
     }
-    
+
     public void showOpponentCards(Card c1,Card c2)
     {
         super.showOpponentCards(c1,c2);
@@ -251,26 +603,34 @@ public class AI extends Player
     {
         if (AIvAI.stage == AIvAI.PRE_FLOP)
         {
+            if (lastStage != AIvAI.stage)
+                raised = false;
             actPreFlop();
+            lastStage = AIvAI.stage;
         }
         else if (AIvAI.stage == AIvAI.FLOP)
         {
+            if (lastStage != AIvAI.stage)
+                raised = false;
             actFlop();
+            lastStage = AIvAI.stage;
         }
         else if (AIvAI.stage == AIvAI.TURN)
         {
+            if (lastStage != AIvAI.stage)
+                raised = false;
             actTurn();
+            lastStage = AIvAI.stage;
         }
         else if (AIvAI.stage == AIvAI.RIVER)
         {
+            if (lastStage != AIvAI.stage)
+                raised = false;
             actRiver();
-        }
-        else
-        {
-            call();
+            lastStage = AIvAI.stage;
         }
     }
-    
+
     public String toString()
     {
         return "" + chips;

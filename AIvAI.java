@@ -70,7 +70,7 @@ public class AIvAI
     /**
      * the main game loop
      */
-    public AI run(AI a, AI b)
+    public int run(AI a, AI b)
     {
         user = a;
         cpu = b;
@@ -80,12 +80,12 @@ public class AIvAI
             if (State == State.END_HAND)
             {
                 if (cpu.chips == 0)
-                return user;
+                return 1;
                 else
-                return cpu;
+                return 0;
             }
         }
-        return null;
+        return -1;
     }
 
     /**
@@ -93,10 +93,10 @@ public class AIvAI
      */
     public void newHand()
     {
-        System.out.println("chips: " + cpu.chips + ", " + user.chips);
+        System.out.println("p1: " + user.chips);
+        System.out.println("p2: " + cpu.chips);
         if (user.chips == 0||cpu.chips == 0)
         {
-            System.out.println("done");
             State = State.END_HAND;
         }
         handCount++;
@@ -203,8 +203,8 @@ public class AIvAI
         }
         else if (player.fold && !handDone)
         {
-            State = STATE.FOLD;
             otherPlayer(player).chips += pot;
+            stage = 0;
             handDone = true;
         }
         else if (player.raise != 0 && !handDone)
@@ -329,8 +329,6 @@ public class AIvAI
             PokerHandOriginal u = new PokerHandOriginal(user.getCards());
             PokerHandOriginal c = new PokerHandOriginal(cpu.getCards());
             winner = u.beats(c);
-            System.out.println("cpu: " + cpu.getCards());
-            System.out.println("user: " + user.getCards());
             cpu.showOpponentCards(cards.get(0),cards.get(1));
             user.showOpponentCards(cards.get(7),cards.get(8));
         }
@@ -422,10 +420,6 @@ public class AIvAI
         if (State == STATE.ALL_IN)
         {
             allIn();
-        }
-        else if (State == STATE.FOLD)
-        {
-            hand();
         }
         else
         {
