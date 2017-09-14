@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
 /**
- * The Framework and directions and graphics for game to run. In this game, a user plays heads up poker
+ * The Framework and directions and graphics for game to run. In this game, a p1 plays heads up poker
  * against an AI.
  * 
  * @Lincoln Updike
@@ -21,8 +21,8 @@ public class AIvAI
     private static boolean riverDone = false;
     private static boolean handDone = false;
 
-    public static AI user;
-    public static AI cpu;
+    public static AI p1;
+    public static AI p2;
     private static Player[] players;
     private static int handCount = 1;
     //List of all the cards in the hand that have been dealt, or will be dealt
@@ -34,25 +34,25 @@ public class AIvAI
     public static int bet;
     //the number of chips in the pot after the last stage
     public static int lastPot;
-    public int amountUSER;
-    public int amountCPU;
-    //true if the cpu/user has just made a new move
-    private boolean newCPUMove = true;
-    private boolean newUSERMove = true;
+    public int amountp1;
+    public int amountp2;
+    //true if the p2/p1 has just made a new move
+    private boolean newp2Move = true;
+    private boolean newp1Move = true;
     //when a new Stage of the game is reached (flop/turn/river)
     //this variable is set to System.currentTimeMillis()
     public static double newStageTime = 0;
-    //the String that represents the last action of the cpu/user
-    String displayUSER;
-    String displayCPU;
+    //the String that represents the last action of the p2/p1
+    String displayp1;
+    String displayp2;
     //keeps track of if someone folded, set to false if they folded
-    public static boolean cpuFold = true;
-    public static boolean userFold = true;
+    public static boolean p2Fold = true;
+    public static boolean p1Fold = true;
 
     private boolean running = true;
     private Thread thread;
-    //when somebody folds, if it was the CPU who folded, this variable is set to true
-    public boolean cpuFolded;
+    //when somebody folds, if it was the p2 who folded, this variable is set to true
+    public boolean p2Folded;
     public boolean someoneAllIn = false;
     public boolean allIn = false;
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
@@ -70,22 +70,22 @@ public class AIvAI
     /**
      * the main game loop
      */
-    public int run(AI a, AI b)
+    public String run(AI a, AI b)
     {
-        user = a;
-        cpu = b;
+        p1 = a;
+        p2 = b;
         while (running)
         { 
             render();
             if (State == State.END_HAND)
             {
-                if (cpu.chips == 0)
-                return 1;
+                if (p1.chips == 0)
+                return "p2";
                 else
-                return 0;
+                return "p1";
             }
         }
-        return -1;
+        return "";
     }
 
     /**
@@ -93,9 +93,9 @@ public class AIvAI
      */
     public void newHand()
     {
-        System.out.println("p1: " + user.chips);
-        System.out.println("p2: " + cpu.chips);
-        if (user.chips == 0||cpu.chips == 0)
+        System.out.println("p1: " + p1.chips);
+        System.out.println("p2: " + p2.chips);
+        if (p1.chips == 0||p2.chips == 0)
         {
             State = State.END_HAND;
         }
@@ -104,12 +104,12 @@ public class AIvAI
         lastPot = 0;
         bet = 0;
         cards.clear();
-        user.fold = false;
-        cpu.fold = false;
+        p1.fold = false;
+        p2.fold = false;
         Deck deck = new Deck();
         deck.shuffle();
-        cpuFold = true;
-        userFold = true;
+        p2Fold = true;
+        p1Fold = true;
         allIn = false;
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
@@ -121,19 +121,19 @@ public class AIvAI
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
         if (handCount%2==0)
-            players = new Player[] {user,cpu};
+            players = new Player[] {p1,p2};
         else
-            players = new Player[] {cpu,user};
+            players = new Player[] {p2,p1};
         for (int x = 0;x<players.length;x++)
         {
             players[x].alreadyIn = 0;
         }
-        user.clearCards();
-        cpu.clearCards();
-        user.addCard(cards.get(0));
-        user.addCard(cards.get(1));
-        cpu.addCard(cards.get(7));
-        cpu.addCard(cards.get(8));
+        p1.clearCards();
+        p2.clearCards();
+        p1.addCard(cards.get(0));
+        p1.addCard(cards.get(1));
+        p2.addCard(cards.get(7));
+        p2.addCard(cards.get(8));
         flopDone = false;
         turnDone = false;
         riverDone = false;
@@ -149,14 +149,14 @@ public class AIvAI
     }
 
     /**
-     * takes a player (either cpu or player) and returns the other one
+     * takes a player (either p2 or player) and returns the other one
      */
     public static Player otherPlayer(Player self)
     {
-        if (self == user)
-            return cpu;
+        if (self == p1)
+            return p2;
         else
-            return user;
+            return p1;
     }
 
     /**
@@ -170,10 +170,10 @@ public class AIvAI
         player.alreadyIn += bet - player.alreadyIn;
         bet += player.raise;
         player.call = true;
-        if (user.chips<cpu.chips)
-            possibleBet = user.chips;
+        if (p1.chips<p2.chips)
+            possibleBet = p1.chips;
         else
-            possibleBet = cpu.chips;
+            possibleBet = p2.chips;
         if (bet - player.alreadyIn > possibleBet)
             ;
         else
@@ -187,7 +187,7 @@ public class AIvAI
 
     /**
      * asks the AI what it wants to do, and will change variables move the game forward based 
-     * on the AI or users actions
+     * on the AI or p1s actions
      */
     public void ask(Player player)
     {
@@ -215,19 +215,19 @@ public class AIvAI
     }
 
     /**
-     * changes whose turn it is between the user and AI
+     * changes whose turn it is between the p1 and AI
      */
     public static void switchTurn()
     {
-        if (user.isTurn)
+        if (p1.isTurn)
         {
-            user.isTurn = false;
-            cpu.isTurn = true;
+            p1.isTurn = false;
+            p2.isTurn = true;
         }
         else
         {
-            user.isTurn = true;
-            cpu.isTurn = false;
+            p1.isTurn = true;
+            p2.isTurn = false;
         }
     }
 
@@ -237,15 +237,15 @@ public class AIvAI
      */
     public void askPlayers()
     {
-        if (user.isTurn)
+        if (p1.isTurn)
         {
-            ask(user);
+            ask(p1);
         }
-        else if (cpu.isTurn)
+        else if (p2.isTurn)
         {
-            ask(cpu);
+            ask(p2);
         }
-        if (user.call && cpu.call && !cpu.fold && !user.fold)
+        if (p1.call && p2.call && !p2.fold && !p1.fold)
         {
             stage++;
         }
@@ -258,10 +258,10 @@ public class AIvAI
     {
         players[1].isTurn = true;
         players[0].isTurn = false;
-        user.call = false;
-        cpu.call = false;
-        user.alreadyIn = 0;
-        cpu.alreadyIn = 0;
+        p1.call = false;
+        p2.call = false;
+        p1.alreadyIn = 0;
+        p2.alreadyIn = 0;
         bet = 0;
         lastPot = pot;
     }
@@ -320,23 +320,23 @@ public class AIvAI
     }
 
     /**
-     * finds and displays to the user who won the last hand
+     * finds and displays to the p1 who won the last hand
      */
     private void findWinner()
     {
         if (!handDone)
         {
-            PokerHandOriginal u = new PokerHandOriginal(user.getCards());
-            PokerHandOriginal c = new PokerHandOriginal(cpu.getCards());
+            PokerHandOriginal u = new PokerHandOriginal(p1.getCards());
+            PokerHandOriginal c = new PokerHandOriginal(p2.getCards());
             winner = u.beats(c);
-            cpu.showOpponentCards(cards.get(0),cards.get(1));
-            user.showOpponentCards(cards.get(7),cards.get(8));
+            p2.showOpponentCards(cards.get(0),cards.get(1));
+            p1.showOpponentCards(cards.get(7),cards.get(8));
         }
         if (winner == 1)
         {
             if (!handDone)
             {
-                user.chips += pot;
+                p1.chips += pot;
                 handDone = true;
             }
         }
@@ -344,7 +344,7 @@ public class AIvAI
         {
             if (!handDone)
             {
-                cpu.chips += pot;
+                p2.chips += pot;
                 handDone = true;
             }
         }
@@ -352,8 +352,8 @@ public class AIvAI
         {
             if (!handDone)
             {
-                cpu.chips += pot/2;
-                user.chips += pot/2;
+                p2.chips += pot/2;
+                p1.chips += pot/2;
                 handDone = true;
             }
         }
@@ -365,9 +365,9 @@ public class AIvAI
      */
     private void hand()
     {
-        if (State != STATE.ALL_IN && (user.chips == 0 || cpu.chips == 0))
+        if (State != STATE.ALL_IN && (p1.chips == 0 || p2.chips == 0))
         {
-            if (user.call && cpu.call)
+            if (p1.call && p2.call)
             {
                 if (!allIn)
                 {

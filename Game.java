@@ -40,7 +40,7 @@ public class Game extends Canvas implements Runnable
     private static boolean handDone = false;
 
     public static Player user = new Player(NUM_CHIPS);
-    public static AI cpu = new AI(NUM_CHIPS,.5,.5);
+    public static AI cpu = new AI(NUM_CHIPS,.9,.3);
     private static Player[] players;
     private CardSheet cardSheet = new CardSheet();
     //how many hands have been played

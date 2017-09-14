@@ -21,7 +21,6 @@ public class TestAI
                 for (int x = 0;x<5;x++)
                 {
                     AIvAI game = new AIvAI();
-                    win+=game.run(b,a);
                 }
                 System.out.println("agressive: " + aggressive+(.25*z) + "loose: " + loose+(.25*y));
             }
@@ -30,8 +29,8 @@ public class TestAI
     
     public void test()
     {
-        AI a = new AI(1000,1.0,1.0);
-        AI b = new AI(1000,.7,.2);
+        AI a = new AI(1000,.5,1.0);
+        AI b = new AI(1000,.5,0);
         AIvAI game = new AIvAI();
         System.out.println(game.run(a,b));
     }
