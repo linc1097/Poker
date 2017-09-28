@@ -90,12 +90,12 @@ public class Player
 
     public void raise(int amount)
     {
-        if (chips <= Game.bet || Game.otherPlayer(this).chips <= Game.bet)
+        if (chips <= AIvAI.bet || AIvAI.otherPlayer(this).chips <= AIvAI.bet)
             call();
         else
         {
             raise = amount;
-            Game.otherPlayer(this).call = false;
+            AIvAI.otherPlayer(this).call = false;
             call = true;
         }
     }

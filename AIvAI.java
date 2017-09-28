@@ -24,7 +24,7 @@ public class AIvAI
     public static AI p1;
     public static AI p2;
     private static Player[] players;
-    private static int handCount = 1;
+    private static int handCount = 0;
     //List of all the cards in the hand that have been dealt, or will be dealt
     private static List<Card> cards = new ArrayList<Card>();
     //int representing what stage of the game it is, ex: flop, river, turn
@@ -56,6 +56,7 @@ public class AIvAI
     public boolean someoneAllIn = false;
     public boolean allIn = false;
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
+    public int hands = 0;
 
     public static enum STATE {
         MENU,
@@ -70,22 +71,26 @@ public class AIvAI
     /**
      * the main game loop
      */
-    public String run(AI a, AI b)
+    public ArrayList<Object> run(AI a, AI b)
     {
+        ArrayList<Object> list = new ArrayList<Object>();
         p1 = a;
         p2 = b;
+        State = STATE.GAME;
         while (running)
         { 
             render();
             if (State == State.END_HAND)
             {
+                list.add(new Integer(handCount));
                 if (p1.chips == 0)
-                return "p2";
+                    list.add(p2);
                 else
-                return "p1";
+                    list.add(p1);
+                return list;
             }
         }
-        return "";
+        return null;
     }
 
     /**
@@ -141,8 +146,11 @@ public class AIvAI
         newTurn();
         for (int x = 0;x<players.length;x++)//blinds
         {
-            players[x].raise(10);
-            raise(players[x]);
+            if ((players[x].chips>=20&&bet==10)||bet==0)
+            {
+                players[x].raise(10);
+                raise(players[x]);
+            }
         }
         players[1].call = false; //allows for big blind to have option to raise
         switchTurn();
@@ -397,9 +405,9 @@ public class AIvAI
         if (stage > 5)
         {
             if (allIn)
-            State = State.END_HAND;
+                State = State.END_HAND;
             else
-            stage = 0;
+                stage = 0;
         }
     }
 
@@ -427,7 +435,7 @@ public class AIvAI
             {
                 newHand();
                 if (State == State.END_HAND)
-                return;
+                    return;
                 stage++;
             }
             hand();
