@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
  */
 public class MouseInput implements MouseListener
 {
-
     public void mouseEntered(MouseEvent e)
     {
     }

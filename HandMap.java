@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 /**
- * Write a description of class PokerHand1 here.
+ * Uses data from a previously run method in MakeMap
  * 
  * @author (your name) 
  * @version (a version number or a date)

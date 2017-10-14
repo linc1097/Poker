@@ -14,7 +14,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.ArrayList;
 /**
- * The Framework and directions and graphics for game to run. In this game, a user plays heads up poker
+ * The Framework and directions and graphics for game to run. In this game, a user plays heads up Texas Hold'em poker
  * against an AI.
  * 
  * @Lincoln Updike
@@ -57,7 +57,7 @@ public class Game extends Canvas implements Runnable
     public final Dimension O_1 = new Dimension(10,10);
     public final Dimension O_2 = new Dimension((int)O_1.getWidth()+87,10);
 
-    //rectangles that act as buttons and if clicked, will effect the game
+    //rectangles that act as buttons
     private Rectangle call = new Rectangle(20,HEIGHT-70,100,50);
     private Rectangle fold = new Rectangle(140,HEIGHT-70,100,50);
     private Rectangle raise = new Rectangle(20, HEIGHT-140,100,50);
@@ -222,7 +222,7 @@ public class Game extends Canvas implements Runnable
      */
     public void newHand()
     {
-        if (user.chips == 0||cpu.chips == 0)
+        if (user.chips == 0||cpu.chips == 0)//if anyone has lost the game the game returns to the menu.
         {
             State = STATE.MENU;
         }
@@ -233,12 +233,41 @@ public class Game extends Canvas implements Runnable
         cards.clear();
         user.fold = false;
         cpu.fold = false;
-        Deck deck = new Deck();
-        deck.shuffle();
         cpuFold = true;
         userFold = true;
         allIn = false;
         allInTime = Double.MAX_VALUE;
+        flopDone = false;
+        turnDone = false;
+        riverDone = false;
+        handDone = false;
+        notEnoughChips = false;
+        dealNewHand();
+        setUpBlinds();
+    }
+    
+    /**
+     * called in between new cards being dealt (when both players have called/checked)
+     */
+    public static void newTurn()
+    {
+        players[1].isTurn = true;
+        players[0].isTurn = false;
+        user.call = false;
+        cpu.call = false;
+        user.alreadyIn = 0;
+        cpu.alreadyIn = 0;
+        bet = 0;
+        lastPot = pot;
+    }
+    
+    /**
+     * A deck is shuffled and cards are dealt to each player
+     */
+    public static void dealNewHand()
+    {
+        Deck deck = new Deck();
+        deck.shuffle();
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
@@ -248,27 +277,25 @@ public class Game extends Canvas implements Runnable
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
         cards.add(deck.dealCard());
-        if (handCount%2==0)
-            players = new Player[] {user,cpu};
-        else
-            players = new Player[] {cpu,user};
-        for (int x = 0;x<players.length;x++)
-        {
-            players[x].alreadyIn = 0;
-        }
         user.clearCards();
         cpu.clearCards();
         user.addCard(cards.get(0));
         user.addCard(cards.get(1));
         cpu.addCard(cards.get(7));
         cpu.addCard(cards.get(8));
-        flopDone = false;
-        turnDone = false;
-        riverDone = false;
-        handDone = false;
-        notEnoughChips = false;
+    }
+    
+    /**
+     * the order of betting is set, and the blinds are taken care of
+     */
+    public static void setUpBlinds()
+    {
+        if (handCount%2==0)//sets order that players act in
+            players = new Player[] {user,cpu};
+        else
+            players = new Player[] {cpu,user};
         newTurn();
-        if (players[1].chips<= 10||players[0].chips<=10)
+        if (players[1].chips<= 10||players[0].chips<=10)//if a player does not have enough chips for small blind
         {
             players[0].raise(10);
             raise(players[0]);
@@ -307,25 +334,36 @@ public class Game extends Canvas implements Runnable
      */
     public static void raise(Player player)
     {
+        //the most the player can raise based on chip counts
         int possibleBet;
+        //the player calls any bet that the opponent has made
         pot += bet - player.alreadyIn;
         player.chips -= bet - player.alreadyIn;
         player.alreadyIn += bet - player.alreadyIn;
         bet += player.raise;
         player.call = true;
-        if (user.chips<cpu.chips)
+        if (user.chips<cpu.chips)//checks to see if the raise puts either player all in
             possibleBet = user.chips;
         else
             possibleBet = cpu.chips;
-        if (bet - player.alreadyIn > possibleBet)
+        if (bet - player.alreadyIn > possibleBet)//checks if raise is possible/if it would bring a player below zero chips
             ;
-        else
+        else //sets the bet so it won't make any player go below zero chips
             possibleBet = bet - player.alreadyIn;
+        //changes variables to complete the raise
         bet -= player.raise - possibleBet;
         pot += possibleBet;
         player.raise = 0;
         player.chips -= possibleBet;
         player.alreadyIn = possibleBet + player.alreadyIn;
+    }
+    
+    public static void call(Player player)
+    {
+        player.chips -= bet -player.alreadyIn;
+        pot += bet - player.alreadyIn;
+        player.alreadyIn = bet;
+        player.call = true;
     }
 
     /**
@@ -384,14 +422,6 @@ public class Game extends Canvas implements Runnable
         }
     }
 
-    public static void call(Player player)
-    {
-        player.chips -= bet -player.alreadyIn;
-        pot += bet - player.alreadyIn;
-        player.alreadyIn = bet;
-        player.call = true;
-    }
-
     /**
      * changes whose turn it is between the user and AI
      */
@@ -428,21 +458,6 @@ public class Game extends Canvas implements Runnable
             stage++;
             newStageTime = System.currentTimeMillis();
         }
-    }
-
-    /**
-     * called in between new cards being dealt (when both players have called/checked)
-     */
-    public static void newTurn()
-    {
-        players[1].isTurn = true;
-        players[0].isTurn = false;
-        user.call = false;
-        cpu.call = false;
-        user.alreadyIn = 0;
-        cpu.alreadyIn = 0;
-        bet = 0;
-        lastPot = pot;
     }
 
     /**
@@ -785,7 +800,10 @@ public class Game extends Canvas implements Runnable
         if (stage > 5)
             State = STATE.END_HAND;
     }
-
+    
+    /**
+     * displays the necessary information/buttons for the user to see what cards come after a player has gone all in
+     */
     public void allInRender(Graphics g)
     {
         drawButtons(g);

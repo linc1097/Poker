@@ -18,6 +18,7 @@ public class Player
     public int raise = 0;
     public boolean fold = false;
     public int alreadyIn = 0;
+    //ints containing how many times the player had raised called and folded throughout the game
     public int calls = 0;
     public int raises = 0;
     public int folds = 0;
