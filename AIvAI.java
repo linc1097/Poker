@@ -24,7 +24,7 @@ public class AIvAI
     public static AI p1;
     public static AI p2;
     private static Player[] players;
-    private static int handCount = 0;
+    private int handCount = 0;
     //List of all the cards in the hand that have been dealt, or will be dealt
     private static List<Card> cards = new ArrayList<Card>();
     //int representing what stage of the game it is, ex: flop, river, turn
@@ -56,7 +56,6 @@ public class AIvAI
     public boolean someoneAllIn = false;
     public boolean allIn = false;
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
-    public int hands = 0;
 
     public static enum STATE {
         MENU,
@@ -67,30 +66,32 @@ public class AIvAI
     };
 
     public static STATE State = STATE.GAME;
+    int handsPlayed, handsToPlay;
 
     /**
      * the main game loop
      */
-    public ArrayList<Object> run(AI a, AI b)
+    public int[] run(AI a, AI b,int handsPlayed1, int handsToPlay1)
     {
         ArrayList<Object> list = new ArrayList<Object>();
         p1 = a;
         p2 = b;
         State = STATE.GAME;
+        int[] nums = new int[2];
+        stage = 0;
+        handsPlayed = handsPlayed1;
+        handsToPlay = handsToPlay1;
         while (running)
         { 
             render();
-            if (State == State.END_HAND)
+            if (State == State.END_HAND||handCount+handsPlayed==handsToPlay)
             {
-                list.add(new Integer(handCount));
-                if (p1.chips == 0)
-                    list.add(p2);
-                else
-                    list.add(p1);
-                return list;
+                nums[0] = handCount;
+                nums[1] = p1.chips-1000;
+                return nums;
             }
         }
-        return null;
+        return nums;
     }
 
     /**
@@ -98,8 +99,8 @@ public class AIvAI
      */
     public void newHand()
     {
-        System.out.println("p1: " + p1.chips);
-        System.out.println("p2: " + p2.chips);
+        System.out.println("p1: " + p1.chips + "|||  p2: " + p2.chips);            
+        System.out.println((handCount+handsPlayed)/(double)handsToPlay);
         if (p1.chips == 0||p2.chips == 0)
         {
             State = State.END_HAND;
@@ -144,15 +145,28 @@ public class AIvAI
         riverDone = false;
         handDone = false;
         newTurn();
-        for (int x = 0;x<players.length;x++)//blinds
+        if (players[1].chips<= 10||players[0].chips<=10)
         {
-            if ((players[x].chips>=20&&bet==10)||bet==0)
+            players[0].raise(10);
+            raise(players[0]);
+            players[1].call();
+            call(players[1]);
+            players[0].raises--;
+            players[1].calls--;
+        }
+        else
+        {
+            for (int x = 0;x<players.length;x++)//blinds
             {
                 players[x].raise(10);
                 raise(players[x]);
+                players[x].raises--;
             }
+            if (players[1].chips>0)
+                players[1].call = false; //allows for big blind to have option to raise
         }
-        players[1].call = false; //allows for big blind to have option to raise
+        if (players[0].chips==0&&players[1].chips==0)
+        State = STATE.ALL_IN;
         switchTurn();
     }
 
@@ -203,11 +217,8 @@ public class AIvAI
         ai.act();
         if (player.call && player.raise == 0 && !handDone)
         {
-            player.chips -= bet -player.alreadyIn;
-            pot += bet - player.alreadyIn;
+            call(player);
             switchTurn();
-            player.alreadyIn = bet;
-            player.call = true;
         }
         else if (player.fold && !handDone)
         {
@@ -220,6 +231,14 @@ public class AIvAI
             raise(player);
             switchTurn();
         }
+    }
+
+    public void call(Player player)
+    {
+        player.chips -= bet -player.alreadyIn;
+        pot += bet - player.alreadyIn;
+        player.alreadyIn = bet;
+        player.call = true;
     }
 
     /**
@@ -418,6 +437,7 @@ public class AIvAI
         river();
         findWinner();
         stage = 6;
+        State = STATE.END_HAND;
     }
 
     /**

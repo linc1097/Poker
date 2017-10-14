@@ -18,6 +18,9 @@ public class Player
     public int raise = 0;
     public boolean fold = false;
     public int alreadyIn = 0;
+    public int calls = 0;
+    public int raises = 0;
+    public int folds = 0;
 
     /**
      * Constructor for objects of class Player, takes the starting amount of chips
@@ -81,22 +84,25 @@ public class Player
     {
         call = true;
         calling = true;
+        calls++;
     }
 
     public void fold()
     {
         fold = true;
+        folds++;
     }
 
     public void raise(int amount)
     {
-        if (chips <= AIvAI.bet || AIvAI.otherPlayer(this).chips <= AIvAI.bet)
+        if (chips <= Game.bet)
             call();
         else
         {
             raise = amount;
-            AIvAI.otherPlayer(this).call = false;
+            Game.otherPlayer(this).call = false;
             call = true;
+            raises++;
         }
     }
 
@@ -106,5 +112,20 @@ public class Player
             isTurn = false;
         else
             isTurn = true;
+    }
+    
+    public int getNumCalls()
+    {
+        return calls;
+    }
+    
+    public int getNumRaises()
+    {
+        return raises;
+    }
+    
+    public int getNumFolds()
+    {
+        return folds;
     }
 }

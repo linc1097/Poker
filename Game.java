@@ -27,10 +27,10 @@ public class Game extends Canvas implements Runnable
     public static final int WIDTH = 640;
     public static final int HEIGHT = WIDTH/12*9;
     public final String TITLE = "Poker";
-    private static final int NUM_CHIPS = 1000;
+    private static final int NUM_CHIPS = 20;
     //int represeting who won at the end of a hand
     private int winner;
-    
+
     public static int[] primes = {0,1,2,3,5,7,11,13,17,19,23,29,31,37,41,43};
 
     //these variables control the dealing of new cards as the game progresses
@@ -107,6 +107,7 @@ public class Game extends Canvas implements Runnable
     //when somebody folds, if it was the CPU who folded, this variable is set to true
     public boolean cpuFolded;
     public boolean someoneAllIn = false;
+    public boolean notEnoughChips = false;
 
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
 
@@ -265,13 +266,27 @@ public class Game extends Canvas implements Runnable
         turnDone = false;
         riverDone = false;
         handDone = false;
+        notEnoughChips = false;
         newTurn();
-        for (int x = 0;x<players.length;x++)//blinds
+        if (players[1].chips<= 10||players[0].chips<=10)
         {
-            players[x].raise(10);
-            raise(players[x]);
+            players[0].raise(10);
+            raise(players[0]);
+            players[1].call();
+            call(players[1]);
         }
-        players[1].call = false; //allows for big blind to have option to raise
+        else
+        {
+            for (int x = 0;x<players.length;x++)//blinds
+            {
+                players[x].raise(10);
+                raise(players[x]);
+            }
+            if (players[1].chips>0)
+                players[1].call = false; //allows for big blind to have option to raise
+        }
+        if (players[0].chips==0&&players[1].chips==0)
+            State = STATE.ALL_IN;
         switchTurn();
         newStageTime = System.currentTimeMillis();
     }
@@ -322,15 +337,13 @@ public class Game extends Canvas implements Runnable
         if (player == cpu && !cpu.call)
         {
             AI ai = (AI)player;
-            ai.act();
+            if (!notEnoughChips)
+                ai.act();
         }
-        if (player.call && player.raise == 0 && !handDone)
+        if ((player.call && player.raise == 0 && !handDone)||(notEnoughChips && !handDone))
         {
-            player.chips -= bet -player.alreadyIn;
-            pot += bet - player.alreadyIn;
+            call(player);
             switchTurn();
-            player.alreadyIn = bet;
-            player.call = true;
             if (player == cpu)
             {
                 if (bet == 0||(stage == 1 && pot == 40 && otherPlayer(player).call))
@@ -369,6 +382,14 @@ public class Game extends Canvas implements Runnable
                 newUSERMove = true;
             }
         }
+    }
+
+    public static void call(Player player)
+    {
+        player.chips -= bet -player.alreadyIn;
+        pot += bet - player.alreadyIn;
+        player.alreadyIn = bet;
+        player.call = true;
     }
 
     /**
@@ -498,9 +519,9 @@ public class Game extends Canvas implements Runnable
         g.drawString("Chips: " + cpu.chips, (int)O_2.getWidth()+141,(int)O_2.getHeight()+44);
         //pot
         if (State == STATE.GAME)
-        g.drawString("Pot: " + lastPot,(int)FLOP_3.getWidth()+10,(int)FLOP_3.getHeight()-10);
+            g.drawString("Pot: " + lastPot,(int)FLOP_3.getWidth()+10,(int)FLOP_3.getHeight()-10);
         else
-        g.drawString("Pot: " + pot,(int)FLOP_3.getWidth()+10,(int)FLOP_3.getHeight()-10);
+            g.drawString("Pot: " + pot,(int)FLOP_3.getWidth()+10,(int)FLOP_3.getHeight()-10);
     }
 
     /**
@@ -653,7 +674,7 @@ public class Game extends Canvas implements Runnable
             }
         }
     }
-    
+
     public boolean allIn = false;
     public double allInTime = Double.MAX_VALUE;
     /**
@@ -676,7 +697,7 @@ public class Game extends Canvas implements Runnable
                     allIn = true;
                 }
                 if (System.currentTimeMillis() - allInTime > 1500)
-                State = STATE.ALL_IN;
+                    State = STATE.ALL_IN;
             }
         }
         if (System.currentTimeMillis() - newStageTime > 2500 && State != STATE.FOLD)
