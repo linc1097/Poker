@@ -1,9 +1,9 @@
 
 /**
- * Write a description of class StartingHand here.
+ * Represents the possibilitis of the two hand starting hands held by the players
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @Lincoln Updike 
+ * @10.14.17
  */
 public class StartingHand
 {

@@ -65,7 +65,6 @@ public class AI extends Player
                 {
                     smallestDiff = diff;
                     answer = check;
-                    System.out.println(answer);
                 }
                 }
         System.out.println("" + c +  " " + r + " " + f);

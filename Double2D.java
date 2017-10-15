@@ -1,9 +1,10 @@
 import java.util.*;
 /**
- * Write a description of class Double2D here.
+ * A class containing a 2D array of doubles, used in maps because this class allows for the 2D array to have 
+ * a .equals method and a .hashCode method
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @Lincoln Updike
+ * @10.14.17
  */
 public class Double2D
 {

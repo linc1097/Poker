@@ -182,7 +182,7 @@ public class MakeFinalArray
     
     /**
      * creates an array in which the int values in the list of hands represents an index on a scattered
-     * array, and in each index is the rank of the hand
+     * array, and in each index is the rank of the hands, also the repeats and their values are printed
      */
     public static int[] makeArray()
     {
@@ -194,7 +194,9 @@ public class MakeFinalArray
             if (array[mod] == 0)
                 array[mod] = x+1;
             else
+            {
                 add(repeats,mod);
+            }
         }
         for (int x = 0;x<repeats.length;x++)
         {
@@ -229,6 +231,16 @@ public class MakeFinalArray
                 return true;
         }
         return false;
+    }
+    
+    public static int indexOf(int x, int[] array)
+    {
+        for (int i = 0;i<array.length;i++)
+        {
+            if (array[i] == x)
+            return i;
+        }
+        return -1;
     }
     
 }

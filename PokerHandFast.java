@@ -5,12 +5,12 @@ import java.util.HashMap;
 /**
  * Evaluates poker hands
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @Lincoln Updike
+ * @10.14.17
  */
 public class PokerHandFast
 {
-    private Map<Integer,Integer> map;
+    private Map<Integer,Integer> map = new HashMap<Integer,Integer>();
     private int z;
     private int y;
     private int x;
@@ -24,8 +24,18 @@ public class PokerHandFast
      */
     public PokerHandFast()
     {
+        map.put(new Integer(16782571), new Integer(3896));
+        map.put(new Integer(20691), new Integer(4220));
+        map.put(new Integer(70805), new Integer(4338));
+        map.put(new Integer(2519959), new Integer(5380));
+        map.put(new Integer(2357862), new Integer(5980));
+        map.put(new Integer(16782571), new Integer(3896));
+        map.put(new Integer(20691), new Integer(4220));
+        map.put(new Integer(70805), new Integer(4338));
+        map.put(new Integer(2519959), new Integer(5380));
+        map.put(new Integer(2357862), new Integer(5980));
     }
-    
+
     /**
      * returns 1 if hand1 is better
      * 0 if hand2 is better
@@ -43,75 +53,9 @@ public class PokerHandFast
             return 2;
     }
 
-    public void testMapSpeed()
-    {
-        int b;
-        List<Card> hand = new ArrayList<Card>();
-        Card c1 = new Card(1,2);
-        Card c2 = new Card(2,6);
-        Card c3 = new Card(1,7);
-        Card c4 = new Card(4,13);
-        Card c5 = new Card(3,13);
-        Card c6 = new Card(3,2);
-        Card c7 = new Card(2,3);
-        hand.add(c1);
-        hand.add(c2);
-        hand.add(c3);
-        hand.add(c4);
-        hand.add(c5);
-        hand.add(c6);
-        hand.add(c7);
-        double time = System.currentTimeMillis();
-        for (int i = 0;i<894916;i++)
-        {
-            /*
-            b = rankOfHand(10309819);
-            if (hasFlush(hand.get(0),hand.get(1),hand.get(2),hand.get(3),hand.get(4)))
-            ;
-             */
-            //winner(hand,hand);
-            if (i%(894916/100)==0)
-                System.out.println(i/(894916/100));
-        }
-        System.out.println((System.currentTimeMillis() - time));
-    }
-
-    public int handVal(List<Card> hand)//old, slow method
-    {
-        int count = 0;
-        int high = 0;
-        int val;
-        int index = 0;
-        List<Card> list = new ArrayList<Card>();
-        Card card = new Card(1,2);
-        for (int x = 0;x<5;x++)
-        {
-            list.add(card);
-        }
-        for (int x = 0;x<6;x++)
-        {
-            for (int y = x+1;y<7;y++)
-            {
-                for (int z = 0;z<7;z++)
-                {
-                    if (z!=x&&z!=y)
-                    {
-                        list.set(index,hand.get(z));
-                        index++;
-                    }
-                }
-                HandToInt handInt = new HandToInt(list);
-                val = map.get(handInt.numValue());
-                if (val>high)
-                    high = val;
-                index = 0;
-                count++;
-            }
-        }
-        System.out.println(count);
-        return high;
-    }
-
+    /**
+     * returns the integer representation of the best five card hand in the given seven card hand
+     */
     public int handValue(Card[] hand)
     {
         high = 0;
@@ -147,7 +91,10 @@ public class PokerHandFast
         }
         return high;
     }
-
+    
+    /**
+     * returns an int representing how good a hand was, the hand is represented by the given int num
+     */
     public int rankOfHand(int num)
     {
         int x = array[(num%(2*1024*1024))];
