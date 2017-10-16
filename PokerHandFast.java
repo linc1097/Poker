@@ -24,16 +24,16 @@ public class PokerHandFast
      */
     public PokerHandFast()
     {
-        map.put(new Integer(16782571), new Integer(3896));
-        map.put(new Integer(20691), new Integer(4220));
-        map.put(new Integer(70805), new Integer(4338));
-        map.put(new Integer(2519959), new Integer(5380));
-        map.put(new Integer(2357862), new Integer(5980));
-        map.put(new Integer(16782571), new Integer(3896));
-        map.put(new Integer(20691), new Integer(4220));
-        map.put(new Integer(70805), new Integer(4338));
-        map.put(new Integer(2519959), new Integer(5380));
-        map.put(new Integer(2357862), new Integer(5980));
+        map.put(new Integer(16782571),new Integer(3896));
+        map.put(new Integer(20691),new Integer(4220));
+        map.put(new Integer(70805),new Integer(4338));
+        map.put(new Integer(2519959),new Integer(5380));
+        map.put(new Integer(2357862),new Integer(5980));
+        map.put(new Integer(5355),new Integer(1510));
+        map.put(new Integer(2117843),new Integer(3731));
+        map.put(new Integer(2167957),new Integer(2350));
+        map.put(new Integer(422807),new Integer(2627));
+        map.put(new Integer(260710),new Integer(3343));
     }
 
     /**
@@ -91,7 +91,7 @@ public class PokerHandFast
         }
         return high;
     }
-    
+
     /**
      * returns an int representing how good a hand was, the hand is represented by the given int num
      */
