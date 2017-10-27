@@ -61,13 +61,13 @@ represents how loose that AI plays. Both are decimal values between 0 and 1. `ag
 a player raises (a higher aggressive setting leads to more raises) This is shown in the graph below, which 
 shows the percentage of the time an AI raises each time it has to make a decision graphed against the aggressive
 setting.
-![alt text](https://github.com/linc1097/Poker/blob/master/pictures/graph%20aggressive.PNG "graph of raises vs. aggressive setting")
+![alt text](https://github.com/linc1097/Poker/blob/master/poker/pictures/graph%20aggressive.PNG "graph of raises vs. aggressive setting")
 
 `loose` represents how willing the AI is to call. (A higher loose setting means more calling and less folding)
 The graph below shows the loose setting graphed against the percentage of the time the AI folds at each point 
 it makes a decision.
 
-![alt text](https://github.com/linc1097/Poker/blob/master/pictures/graph%20loose.PNG "graph of folds vs. loose setting")
+![alt text](https://github.com/linc1097/Poker/blob/master/poker/pictures/graph%20loose.PNG "graph of folds vs. loose setting")
 
 This data was obtained by having the AI play itself in every combination (from 0 - 1, by increments of .2) of `loose` 
 and `aggressive` settings for 200 hands. Data from having the AI play itself is also used to determine how the 
@@ -80,7 +80,7 @@ If the AI determines that the user is playing like an AI on setting `aggressive 
 will look in the data it has collected by playing itself. It will look at the average winnings per hand of every
 possible play style when playing against an opponent at the setting 0,0. This is an example of the data it looks at:
 
-![alt text](https://github.com/linc1097/Poker/blob/master/pictures/table%20done.PNG "table")
+![alt text](https://github.com/linc1097/Poker/blob/master/poker/pictures/table%20done.PNG "table")
 
 The values in the center of the table represent the average winnings per hand of that playing style against the
 opponent, which is set to 0,0. This data was collected before hand and is stored in a txt file that the AI reads. 
