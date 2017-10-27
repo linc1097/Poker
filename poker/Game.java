@@ -1,5 +1,3 @@
- 
-
 import java.awt.Canvas;
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -27,14 +25,9 @@ import java.awt.font.FontRenderContext;
  */
 public class Game extends Canvas implements Runnable
 {
-    static BufferedImage imageCheck = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-    static Graphics2D graphics = imageCheck.createGraphics();
-    static FontRenderContext frc = graphics.getFontRenderContext();
-    static Font checkFont = new Font("arial", Font.BOLD,50);
-    static Area area = new Area(checkFont.createGlyphVector(frc, "test").getOutline());
-    public static final double FONT_SCALE = area.getBounds2D().getWidth() / 101;
+    public static final double FONT_SCALE = .9;
     //public static final int P1_OFFSET = 78;
-    public static final int P1_OFFSET = 68;
+    public static final int P1_OFFSET = 79;
     public static final int WIDTH = 640;
     public static final int HEIGHT = WIDTH/12*9;
     public final String TITLE = "Poker";
@@ -533,8 +526,8 @@ public class Game extends Canvas implements Runnable
         g.setFont(fnt2);
         g.setColor(Color.WHITE);
         //users chips
-        g.drawImage(chipsPic,(int)P_2.getWidth()-185,(int)P_2.getHeight()+30,this);
-        g.drawString("Chips: " + user.chips, (int)P_2.getWidth()-125,(int)P_2.getHeight()+69);
+        g.drawImage(chipsPic,(int)P_2.getWidth()-195,(int)P_2.getHeight()+30,this);
+        g.drawString("Chips: " + user.chips, (int)P_2.getWidth()-135,(int)P_2.getHeight()+69);
         //cpu's chips
         g.drawImage(chipsPic,(int)O_2.getWidth()+80,(int)O_2.getHeight()+5,this);
         g.drawString("Chips: " + cpu.chips, (int)O_2.getWidth()+141,(int)O_2.getHeight()+44);
@@ -552,18 +545,25 @@ public class Game extends Canvas implements Runnable
         FontRenderContext frc = graphics.getFontRenderContext();
         Area area = new Area(fnt.createGlyphVector(frc, text).getOutline());
         int txtWidth = (int)area.getBounds2D().getWidth();
-        int txtHeight = (int)area.getBounds2D().getHeight();
-        if (text.equals("call/check")||text.equals("next hand"))
-        txtHeight+=10;
-        if (text.equals("fold"))
-        txtHeight-=2;
+        int rectWidth = (int)r.getWidth();
+        int intendedWidth = (int)(rectWidth*.8);
+        double fScale = (double)intendedWidth/(double)txtWidth;
+        
+        
+        Font fnt1 = new Font("arial", Font.BOLD, (int)(fnt.getSize()*fScale));
+        imageCheck = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        graphics = imageCheck.createGraphics();
+        frc = graphics.getFontRenderContext();
+        area = new Area(fnt1.createGlyphVector(frc, text).getOutline());
+        txtWidth = (int)area.getBounds2D().getWidth();
+        int txtHeight = (int)(area.getBounds2D().getHeight()*-1);
         int blankSpaceWidth = (int)r.getWidth() - txtWidth;
         int blankSpaceHeight = (int)r.getHeight() - txtHeight;
         blankSpaceHeight/= 2;
         blankSpaceWidth/= 2;
-        g.setFont(fnt);
+        g.setFont(fnt1);
         g.setColor(Color.WHITE);
-        g.drawString(text, r.x + blankSpaceWidth, r.y + 2*blankSpaceHeight);
+        g.drawString(text, r.x + blankSpaceWidth, r.y + blankSpaceHeight);
     }
 
     /**

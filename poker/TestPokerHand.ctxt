@@ -1,0 +1,18 @@
+#BlueJ class context
+comment0.params=
+comment0.target=void\ run_Million_Hands()
+comment0.text=\r\n\ runs\ one\ million\ hands\ and\ records\ how\ many\ times\ each\ type\ of\ hand\ is\ gotten\r\n
+comment1.params=
+comment1.target=void\ test_Hand()
+comment1.text=\r\n\ used\ to\ test\ the\ method\ in\ PokerCards\ hasWhat(),\ which\ determines\ what\ the\ hand\ holds,\ ex\:\ two\ pair\r\n
+comment2.params=
+comment2.target=void\ countHands()
+comment2.text=\r\n\ evaluates\ one\ million\ hands,\ recording\ how\ many\ times\ each\ hand\ is\ gotten\r\n
+comment3.params=
+comment3.target=void\ testSpeed()
+comment4.params=cards
+comment4.target=java.util.List\ clone(java.util.List)
+comment5.params=
+comment5.target=void\ printResults()
+comment5.text=\r\n\ prints\ the\ percentages\ of\ each\ hand\ being\ the\ best\ possible\ hand\r\n
+numComments=6

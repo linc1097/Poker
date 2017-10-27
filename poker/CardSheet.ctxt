@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=
+comment0.target=CardSheet()
+comment0.text=\r\n\ initializes\ the\ card\ sheet\ with\ the\ picture\ of\ the\ cards\ laid\ out\ on\ a\ grid\r\n
+comment1.params=c
+comment1.target=java.awt.image.BufferedImage\ getCardImage(Card)
+comment1.text=\r\n\ returns\ an\ image\ of\ a\ card\ of\ the\ desired\ rank\ and\ suit\r\n
+numComments=2

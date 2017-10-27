@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.params=a\ b
+comment0.target=Double2D(int,\ int)
+comment1.params=x\ a\ b
+comment1.target=void\ set(double,\ int,\ int)
+comment2.params=a\ b
+comment2.target=double\ get(int,\ int)
+comment3.params=obj
+comment3.target=boolean\ equals(java.lang.Object)
+comment4.params=
+comment4.target=int\ hashCode()
+comment5.params=
+comment5.target=void\ testHash()
+comment6.params=
+comment6.target=java.lang.String\ toString()
+numComments=7

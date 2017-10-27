@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.params=r1\ r2\ suited
+comment0.target=StartingHand(int,\ int,\ boolean)
+comment1.params=
+comment1.target=int\ getRank1()
+comment2.params=
+comment2.target=int\ getRank2()
+comment3.params=
+comment3.target=boolean\ getSuited()
+comment4.params=x
+comment4.target=boolean\ equals(java.lang.Object)
+comment5.params=
+comment5.target=int\ hashCode()
+numComments=6

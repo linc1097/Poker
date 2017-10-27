@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.params=
+comment0.target=int[]\ getArray()
+comment1.params=
+comment1.target=void\ printMap()
+comment2.params=
+comment2.target=void\ printHands()
+comment2.text=\r\n\ converts\ the\ hands\ in\ the\ list\ from\ their\ integer\ representations\ and\ prints\ them\ in\ order\r\n
+comment3.params=
+comment3.target=void\ arrayRange()
+comment3.text=\r\n\ finds\ and\ prints\ the\ smallest\ and\ largest\ ints\ in\ the\ list\ of\ ints\ representing\ hands\r\n
+comment4.params=
+comment4.target=int[]\ makeArray()
+comment4.text=\r\n\ creates\ an\ array\ in\ which\ the\ int\ values\ in\ the\ list\ of\ hands\ represents\ an\ index\ on\ a\ scattered\r\n\ array,\ and\ in\ each\ index\ is\ the\ rank\ of\ the\ hands,\ also\ the\ repeats\ and\ their\ values\ are\ printed\r\n
+comment5.params=x\ val
+comment5.target=void\ add(int[],\ int)
+comment5.text=\r\n\ finds\ the\ fisrt\ empty\ space\ in\ the\ array\ and\ sets\ that\ space\ to\ val\r\n
+comment6.params=x\ array
+comment6.target=boolean\ contains(int,\ int[])
+comment6.text=\r\n\ returns\ true\ if\ the\ given\ array\ contains\ the\ given\ int\ value\r\n
+comment7.params=x\ array
+comment7.target=int\ indexOf(int,\ int[])
+numComments=8
