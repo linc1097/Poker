@@ -27,7 +27,6 @@ public class MouseInput implements MouseListener
     public void mousePressed(MouseEvent e)
     {
         Rectangle playButton = new Rectangle(Game.WIDTH/4+120,150,100,50);
-        Rectangle helpButton = new Rectangle(Game.WIDTH/4+120,250,100,50);
         Rectangle quitButton = new Rectangle(Game.WIDTH/4+120,350,100,50);
         Rectangle call = new Rectangle(20,Game.HEIGHT-70,100,50);
         Rectangle fold = new Rectangle(140,Game.HEIGHT-70,100,50);
@@ -44,6 +43,13 @@ public class MouseInput implements MouseListener
                     Game.user.chips = 1000;
                     Game.cpu.chips = 1000;
                     Game.stage = 0;
+                }
+            }
+            if (mx >= quitButton.getX() && mx<= quitButton.getX() + quitButton.getWidth())
+            {
+                if (my >= quitButton.getY() && my<= quitButton.getY() + quitButton.getHeight())
+                {
+                    System.exit(0);
                 }
             }
         }
