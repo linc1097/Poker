@@ -4,12 +4,8 @@ and alters its playing style in order to beat the user.
 ## Creating The Poker Environment
 The poker game itself that the AI plays was made with my knowledge of the rules of poker and with help
 from online tutorials. The main game loop uses a BufferedImages and drawn text and shapes to display
-the graphics to the user. The game loop continually runs, and the images which appear on screen are 
-redrawn continuously until action by the user or AI prompts the game to display different information
-to the user. This was a challenge when designing the poker game, because the game did not follow a logical
-progression. The game loop was contantly moving through all of the methods. As a result, lots of booleans
-and Enums are used to keep track of what stage the game is in, and what information should be displayed. 
-The graphics and rules of the poker game are held in the Game class. 
+the graphics to the user. The poker game is made so that an AI can call simple methods like `call()`, 
+`fold()`, and `raise(int num)` to play against the user. 
 ## The AI
 One of the main things the AI uses to make decisions is the percentage chance it will win the hand. This 
 was reletively easy to find pre-flop, because there are only 169 distinct starting hands when the only factors
@@ -53,7 +49,49 @@ sparse array, and all of the integers that represented specific five card poker 
             array[repeats[x]] = 0;
         return array;
 ```
+There were 10 repeats because the numbers had to be modded by 2^21, and those were stored in a map. The map is
+only used a fraction of the time. Because getting the value at a certain index of an array is much faster than
+getting the value unlocked by a key in a map, this sped up the poker hand evaluator considereably, and now the 
+1070190 hands that needed to be evaluated to get a percent chance the AI wins the hand could be evaluated in about
+0.6 seconds. 
+## Altering the AI's Play Style Based on the Opponent
+The AI alters it's play style according to how the user is playing. In order to change its own play style, 
+the AI holds two doubles, `aggressive`, which represents how aggressively the AI plays, and `loose`, which
+represents how loose that AI plays. Both are decimal values between 0 and 1. `agressive` represents how often
+a player raises (a higher aggressive setting leads to more raises) This is shown in the graph below, which 
+shows the percentage of the time an AI raises each time it has to make a decision graphed against the aggressive
+setting.
+![alt text](https://github.com/linc1097/Poker/blob/master/pictures/graph%20aggressive.PNG "graph of raises vs. aggressive setting")
 
-The AI alters it's play style according to how the user is playing. In order to alter its own play style, 
-the AI holds two doubles, aggressive, which represents how aggressively the AI plays, and Loose, which
-represents how loose that AI plays. 
+`loose` represents how willing the AI is to call. (A higher loose setting means more calling and less folding)
+The graph below shows the loose setting graphed against the percentage of the time the AI folds at each point 
+it makes a decision.
+
+![alt text](https://github.com/linc1097/Poker/blob/master/pictures/graph%20loose.PNG "graph of folds vs. loose setting")
+
+This data was obtained by having the AI play itself in every combination (from 0 - 1, by increments of .2) of `loose` 
+and `aggressive` settings for 200 hands. Data from having the AI play itself is also used to determine how the 
+AI should play based on the play style of its opponent. The percent times each style of play (36 distinct styles of
+play based on `aggressive` and `loose` settings) calls folds and raises was recorded, and the AI keeps track of 
+the percent time the user calls folds and raises. Once enough data is gathered, the AI determines which play style
+the user is playing most similarly to. Then the AI uses the data obtained by having the AI play iteslf with every
+combination of play style to determine which play style it should use to play best against the user. For example:
+If the AI determines that the user is playing like an AI on setting `aggressive = 0` and `loose = 0`, then the AI
+will look in the data it has collected by playing itself. It will look at the average winnings per hand of every
+possible play style when playing against an opponent at the setting 0,0. This is an example of the data it looks at:
+
+![alt text](https://github.com/linc1097/Poker/blob/master/pictures/table%20done.PNG "table")
+
+The values in the center of the table represent the average winnings per hand of that playing style against the
+opponent, which is set to 0,0. This data was collected before hand and is stored in a txt file that the AI reads. 
+In this case, the highest average winnings are 17.25 by an AI set to (0.6, 0.6). As a result, if the user is determined
+to be playing most like an AI set to (0,0), the AI will set itself to (0.6, 0.6) in order to beat the user. 
+## The Process
+In AP computer science class, we had a project where we made a program to evaluate poker hands. I thought it was
+really cool. I had also been playing poker with my friends a lot. I had read some books on strategy, and am still
+very interested in the game of poker. Over the summer I embarked on this project, with the goal of making something
+that could beat my friends and maybe even myself. In its current state, I am very happy to say that it can beat 
+a lot of my friends most of the time, and even when I play against it (which is a little unfair because I know exactly
+how it thinks) I have a hard time beating it. It is mostly finished but I still find little things I want to tweak 
+every time I look at it. The problems I had to solve to make this program were very fun and interesting to me, and I
+am glad I put in the time and energy to make something that I think is really cool. 
