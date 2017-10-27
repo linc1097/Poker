@@ -586,7 +586,7 @@ public class Game extends Canvas implements Runnable
             //g.drawString("fold",fold.x+23,fold.y+37);
             drawButtonText(fold, "fold", fnt, g);
             //g.drawString("raise",raise.x+17,raise.y+36);
-            drawButtonText(raise, "raise", fnt, g);
+            drawButtonText(raise, "raise/bet", fnt, g);
         }
         else if (State == STATE.END_HAND || State == STATE.FOLD)
         {

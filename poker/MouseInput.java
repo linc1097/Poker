@@ -27,7 +27,7 @@ public class MouseInput implements MouseListener
     public void mousePressed(MouseEvent e)
     {
         Rectangle playButton = new Rectangle(Game.WIDTH/4+120,150,100,50);
-        Rectangle quitButton = new Rectangle(Game.WIDTH/4+120,350,100,50);
+        Rectangle quitButton = new Rectangle(Game.WIDTH/4+120,250,100,50);
         Rectangle call = new Rectangle(20,Game.HEIGHT-70,100,50);
         Rectangle fold = new Rectangle(140,Game.HEIGHT-70,100,50);
         Rectangle raise = new Rectangle(20,Game.HEIGHT-140,100,50);

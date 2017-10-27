@@ -15,7 +15,7 @@ public class CardSheet
     {
         ImageLoader x = new ImageLoader();
         try{
-            image = x.loadImage("pictures/cards.png.png");
+            image = x.loadImage("pictures/cards.png");
         }
         catch (IOException e) {
             e.printStackTrace();
