@@ -104,6 +104,16 @@ public class MouseInput implements MouseListener
                 }
             }
         }
+        else if (Game.State == Game.STATE.END_GAME)
+        {
+            if (mx >= call.getX() && mx<= call.getX() + call.getWidth())
+            {
+                if (my >= call.getY() && my<= call.getY() + call.getHeight())
+                {
+                    Game.State = Game.STATE.MENU;
+                }
+            }
+        }
     }
 
     public void mouseReleased(MouseEvent e)

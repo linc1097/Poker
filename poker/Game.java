@@ -31,7 +31,7 @@ public class Game extends Canvas implements Runnable
     public static final int WIDTH = 640;
     public static final int HEIGHT = WIDTH/12*9;
     public final String TITLE = "Poker";
-    private static final int NUM_CHIPS = 20;
+    private static final int NUM_CHIPS = 1000;
     //int represeting who won at the end of a hand
     private int winner;
 
@@ -116,7 +116,7 @@ public class Game extends Canvas implements Runnable
 
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
 
-    public static enum STATE {MENU, GAME, END_HAND, FOLD, ALL_IN};
+    public static enum STATE {MENU, GAME, END_HAND, FOLD, ALL_IN, END_GAME};
 
     public static STATE State = STATE.MENU;
 
@@ -244,7 +244,7 @@ public class Game extends Canvas implements Runnable
         dealNewHand();
         setUpBlinds();
     }
-    
+
     /**
      * called in between new cards being dealt (when both players have called/checked)
      */
@@ -259,7 +259,7 @@ public class Game extends Canvas implements Runnable
         bet = 0;
         lastPot = pot;
     }
-    
+
     /**
      * A deck is shuffled and cards are dealt to each player
      */
@@ -283,7 +283,7 @@ public class Game extends Canvas implements Runnable
         cpu.addCard(cards.get(7));
         cpu.addCard(cards.get(8));
     }
-    
+
     /**
      * the order of betting is set, and the blinds are taken care of
      */
@@ -356,7 +356,7 @@ public class Game extends Canvas implements Runnable
         player.chips -= possibleBet;
         player.alreadyIn = possibleBet + player.alreadyIn;
     }
-    
+
     public static void call(Player player)
     {
         player.chips -= bet -player.alreadyIn;
@@ -537,7 +537,7 @@ public class Game extends Canvas implements Runnable
         else
             g.drawString("Pot: " + pot,(int)FLOP_3.getWidth()+10,(int)FLOP_3.getHeight()-10);
     }
-    
+
     public static void drawButtonText(Rectangle r, String text, Font fnt, Graphics g)
     {
         BufferedImage imageCheck = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
@@ -548,8 +548,7 @@ public class Game extends Canvas implements Runnable
         int rectWidth = (int)r.getWidth();
         int intendedWidth = (int)(rectWidth*.8);
         double fScale = (double)intendedWidth/(double)txtWidth;
-        
-        
+
         Font fnt1 = new Font("arial", Font.BOLD, (int)(fnt.getSize()*fScale));
         imageCheck = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         graphics = imageCheck.createGraphics();
@@ -601,15 +600,18 @@ public class Game extends Canvas implements Runnable
             else
                 drawButtonText(call, "next hand", fnt, g);
         }
-        else if (State == STATE.ALL_IN)
+        else if (State == STATE.ALL_IN||State == STATE.END_GAME)
         {
             Graphics2D g2d = (Graphics2D)g;
             Font fnt = new Font("arial",Font.BOLD,(int)(17*FONT_SCALE));
             //g.setFont(fnt);
             //g.setColor(Color.WHITE);
-            //g2d.draw(call);
+            g2d.draw(call);
             //g.drawString("next card",call.x+3,call.y+30);
+            if (State == STATE.ALL_IN)
             drawButtonText(call, "next card", fnt, g);
+            if (State == STATE.END_GAME)
+            drawButtonText(call, "menu", fnt, g);
         }
     }
 
@@ -831,7 +833,7 @@ public class Game extends Canvas implements Runnable
         if (stage > 5)
             State = STATE.END_HAND;
     }
-    
+
     /**
      * displays the necessary information/buttons for the user to see what cards come after a player has gone all in
      */
@@ -863,10 +865,18 @@ public class Game extends Canvas implements Runnable
         {
             river(g);
             findWinner(g);
-            State = STATE.END_HAND;
-            stage = 6;
-            user.alreadyIn = 0;
-            cpu.alreadyIn = 0;
+            if (user.chips!=0&&cpu.chips!=0)
+            {
+                State = STATE.END_HAND;
+                stage = 6;
+                user.alreadyIn = 0;
+                cpu.alreadyIn = 0;
+            }
+            else
+            {
+                if (State!=STATE.MENU)
+                State = STATE.END_GAME;
+            }
         }
         else
         {
@@ -908,6 +918,11 @@ public class Game extends Canvas implements Runnable
                 g.drawString("You Win", WIDTH/2+85, HEIGHT/2-100);
             else
                 g.drawString("You Lose", WIDTH/2+85, HEIGHT/2-100);
+        }
+        else if (State == STATE.END_GAME)
+        {
+            g.drawImage(image,0,0,getWidth(),getHeight(),this);
+            allInRender(g);
         }
         else
         {
