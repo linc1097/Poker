@@ -28,9 +28,10 @@ public class Menu
         g2D.draw(helpButton);
         g2D.draw(quitButton);
         Font fnt2 = new Font("arial", Font.BOLD, (int)(30*Game.FONT_SCALE));
-        g.setFont(fnt2);
-        g.drawString("PLAY",playButton.x + 13,playButton.y + 37);
-        g.drawString("HELP",helpButton.x + 13,helpButton.y + 37);
-        g.drawString("QUIT",quitButton.x + 13,quitButton.y + 37);
+        //g.setFont(fnt2);
+        Game.drawButtonText(playButton, "PLAY", fnt2, g);
+        //g.drawString("PLAY",playButton.x + 13,playButton.y + 37);
+        Game.drawButtonText(quitButton, "QUIT", fnt2, g);
+        //g.drawString("QUIT",quitButton.x + 13,quitButton.y + 37);
     }
 }

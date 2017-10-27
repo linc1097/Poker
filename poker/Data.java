@@ -91,6 +91,38 @@ public class Data
         System.out.println(maps[0].get(a));
     }
 
+    public void printTableInfo()throws FileNotFoundException,IOException
+    {
+        Map[] maps = readFile();
+        Double2D players = new Double2D(2,2);
+        players.set(0,0,0);//p1 aggressive
+        players.set(0,0,1);//p1 loose
+        for (double a = 0.0;a<1.1;a+=.2)
+            for (double b = 0.0;b<1.1;b+=.2)
+            {
+                players.set(a,1,0);
+                players.set(b,1,1);
+                System.out.println((int)(a*10) + "," + (int)(b*10) + ": " + 
+                    maps[0].get(players));
+            }
+    }
+
+    public void printGraphInfo()throws FileNotFoundException,IOException
+    {
+        Map[] maps = readFile();
+        double[] percs = new double[6];
+        for (double x = 0;x<1.1;x+=.2)
+            for (double y = 0;y<1.1;y+=.2)
+            {
+                Double2D percentages = getPercentages(maps[1], x, y);
+                percs[(int)(y*5)] += percentages.get(0,2);
+            }
+        for (int i = 0;i<percs.length;i++)
+        {
+            System.out.println(percs[i]/6);
+        }
+    }
+
     public Double2D findBest(Map map, double agg, double loose)
     {
         Double2D check = new Double2D(2,2);

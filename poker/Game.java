@@ -13,6 +13,9 @@ import java.awt.RenderingHints;
 import java.awt.Color;
 import java.util.List;
 import java.util.ArrayList;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
+import java.awt.font.FontRenderContext;
 /**
  * The Framework and directions and graphics for game to run. In this game, a user plays heads up Texas Hold'em poker
  * against an AI.
@@ -22,7 +25,13 @@ import java.util.ArrayList;
  */
 public class Game extends Canvas implements Runnable
 {
-    public static final double FONT_SCALE = 1.;
+    static BufferedImage imageCheck = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+    static Graphics2D graphics = imageCheck.createGraphics();
+    static FontRenderContext frc = graphics.getFontRenderContext();
+    static Font checkFont = new Font("arial", Font.BOLD,50);
+    static Area area = new Area(checkFont.createGlyphVector(frc, "test").getOutline());
+    public static final double FONT_SCALE = area.getBounds2D().getWidth() / 101;
+    //public static final int P1_OFFSET = 78;
     public static final int P1_OFFSET = 68;
     public static final int WIDTH = 640;
     public static final int HEIGHT = WIDTH/12*9;
@@ -49,6 +58,7 @@ public class Game extends Canvas implements Runnable
     //these dimensions represent points at which various cards appear on the screen
     public final Dimension P_1 = new Dimension(WIDTH-P1_OFFSET,HEIGHT-100);
     public final Dimension P_2 = new Dimension((int)P_1.getWidth()-90,HEIGHT-100);
+    //public final Dimension P_2 = new Dimension((int)P_1.getWidth()-85,HEIGHT-100);
     public final Dimension FLOP_3 = new Dimension(WIDTH/2-36,HEIGHT/2-49);
     public final Dimension FLOP_2 = new Dimension((int)FLOP_3.getWidth()-85,HEIGHT/2-49);
     public final Dimension FLOP_1 = new Dimension((int)FLOP_2.getWidth()-85,HEIGHT/2-49);
@@ -111,13 +121,7 @@ public class Game extends Canvas implements Runnable
 
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
 
-    public static enum STATE {
-        MENU,
-        GAME,
-        END_HAND,
-        FOLD,
-        ALL_IN
-    };
+    public static enum STATE {MENU, GAME, END_HAND, FOLD, ALL_IN};
 
     public static STATE State = STATE.MENU;
 
@@ -538,6 +542,27 @@ public class Game extends Canvas implements Runnable
         else
             g.drawString("Pot: " + pot,(int)FLOP_3.getWidth()+10,(int)FLOP_3.getHeight()-10);
     }
+    
+    public static void drawButtonText(Rectangle r, String text, Font fnt, Graphics g)
+    {
+        BufferedImage imageCheck = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = imageCheck.createGraphics();
+        FontRenderContext frc = graphics.getFontRenderContext();
+        Area area = new Area(fnt.createGlyphVector(frc, text).getOutline());
+        int txtWidth = (int)area.getBounds2D().getWidth();
+        int txtHeight = (int)area.getBounds2D().getHeight();
+        if (text.equals("call/check")||text.equals("next hand"))
+        txtHeight+=10;
+        if (text.equals("fold"))
+        txtHeight-=2;
+        int blankSpaceWidth = (int)r.getWidth() - txtWidth;
+        int blankSpaceHeight = (int)r.getHeight() - txtHeight;
+        blankSpaceHeight/= 2;
+        blankSpaceWidth/= 2;
+        g.setFont(fnt);
+        g.setColor(Color.WHITE);
+        g.drawString(text, r.x + blankSpaceWidth, r.y + 2*blankSpaceHeight);
+    }
 
     /**
      * draws the buttons the user can press based on what state the game is in
@@ -547,38 +572,42 @@ public class Game extends Canvas implements Runnable
         if (State == STATE.GAME)
         {
             Graphics2D g2d = (Graphics2D)g;
-            Font fnt1 = new Font("arial",Font.BOLD,(int)(18*FONT_SCALE));
-            g.setFont(fnt1);
-            g.setColor(Color.WHITE);
-            g.drawString("call/check",call.x+7,call.y+31);
+            Font fnt1 = new Font("arial",Font.BOLD,(int)(16*FONT_SCALE));
+            //g.setFont(fnt1);
+            //g.setColor(Color.WHITE);
+            //g.drawString("call/check",call.x+7,call.y+31);
+            drawButtonText(call, "call/check", fnt1, g);
             Font fnt = new Font("arial",Font.BOLD,(int)(30*FONT_SCALE));
             g.setFont(fnt);
             g2d.draw(call);
             g2d.draw(raise);
             g2d.draw(fold);
-            g.drawString("fold",fold.x+23,fold.y+37);
-            g.drawString("raise",raise.x+17,raise.y+36);
+            //g.drawString("fold",fold.x+23,fold.y+37);
+            drawButtonText(fold, "fold", fnt, g);
+            //g.drawString("raise",raise.x+17,raise.y+36);
+            drawButtonText(raise, "raise", fnt, g);
         }
         else if (State == STATE.END_HAND || State == STATE.FOLD)
         {
             Graphics2D g2d = (Graphics2D)g;
-            Font fnt = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
-            g.setFont(fnt);
-            g.setColor(Color.WHITE);
+            Font fnt = new Font("arial",Font.BOLD,(int)(17*FONT_SCALE));
+            //g.setFont(fnt);
+            //g.setColor(Color.WHITE);
             g2d.draw(call);
             if (cpu.chips == 0||user.chips == 0)
-                g.drawString("menu",call.x+20,call.y+30);
+                drawButtonText(call, "menu", fnt, g);
             else
-                g.drawString("next hand",call.x+3,call.y+30);
+                drawButtonText(call, "next hand", fnt, g);
         }
         else if (State == STATE.ALL_IN)
         {
             Graphics2D g2d = (Graphics2D)g;
-            Font fnt = new Font("arial",Font.BOLD,(int)(20*FONT_SCALE));
-            g.setFont(fnt);
-            g.setColor(Color.WHITE);
-            g2d.draw(call);
-            g.drawString("next card",call.x+3,call.y+30);
+            Font fnt = new Font("arial",Font.BOLD,(int)(17*FONT_SCALE));
+            //g.setFont(fnt);
+            //g.setColor(Color.WHITE);
+            //g2d.draw(call);
+            //g.drawString("next card",call.x+3,call.y+30);
+            drawButtonText(call, "next card", fnt, g);
         }
     }
 
