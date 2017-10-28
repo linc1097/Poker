@@ -69,9 +69,7 @@ public class AI extends Player
                     answer = check;
                 }
                 }
-        System.out.println("" + c +  " " + r + " " + f);
         Double2D a = (Double2D)percentages.get(answer);
-        System.out.println("" + a.get(0,0) + " " + a.get(0,1) + " " + a.get(0,2));
         return answer;
     }
     

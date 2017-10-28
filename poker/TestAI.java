@@ -3,15 +3,19 @@
 import java.util.*;
 import java.io.*;
 /**
- * Write a description of class TestAI here.
+ * Runs AI against itself and collects data
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @Lincoln Updike
+ * @10.10.17
  */
 public class TestAI
 {
     final int NUM_HANDS = 200;
     final int NUM_CHIPS = 1000;
+    /**
+     * plays NUM_HANDS of hands between two AI's with the given settings and returns an array
+     * containing data collected during the game
+     */
     public double[] runThrough(double aggressive1, double loose1, double aggressive2, double loose2)
     {
         double[] answer = new double[12];
@@ -49,7 +53,10 @@ public class TestAI
         System.out.println("" + aggressive1 + loose1 + aggressive2 + loose2);
         return answer;
     }
-
+    /**
+     * has each combination of aggressive/loose settings play against every possible other setting
+     * and writes the data collected to a text file 'data.txt'
+     */
     public void collectData() throws FileNotFoundException
     {
         PrintWriter out = new PrintWriter("data.txt");

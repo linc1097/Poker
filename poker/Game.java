@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.font.FontRenderContext;
+import javax.imageio.ImageIO;
 /**
  * The Framework and directions and graphics for game to run. In this game, a user plays heads up Texas Hold'em poker
  * against an AI.
@@ -131,7 +132,8 @@ public class Game extends Canvas implements Runnable
         ImageLoader x = new ImageLoader();
         try
         {
-            BufferedImage y = x.loadImage("pictures/cardback.png");
+            //BufferedImage y = x.loadImage("pictures/cardback.png");
+            BufferedImage y = ImageIO.read(ImageLoader.class.getClassLoader().getResourceAsStream("pictures/cardback.png"));
             cardBack = y.getScaledInstance((y.getWidth()/9),(y.getHeight()/9),Image.SCALE_DEFAULT);
         }
         catch (IOException e)
@@ -141,7 +143,8 @@ public class Game extends Canvas implements Runnable
         }
         try
         {
-            BufferedImage z = x.loadImage("pictures/chips.png");
+            //BufferedImage z = x.loadImage("pictures/chips.png");
+            BufferedImage z = ImageIO.read(ImageLoader.class.getClassLoader().getResourceAsStream("pictures/chips.png"));
             chipsPic = z.getScaledInstance((z.getWidth()/4),(z.getHeight()/4),Image.SCALE_DEFAULT);
         }
         catch (IOException e)
@@ -151,7 +154,8 @@ public class Game extends Canvas implements Runnable
         }
         try
         {
-            BufferedImage i = x.loadImage("pictures/smallstack.png");
+            //BufferedImage i = x.loadImage("pictures/smallstack.png");
+            BufferedImage i = ImageIO.read(ImageLoader.class.getClassLoader().getResourceAsStream("pictures/smallstack.png"));
             smallStack = i.getScaledInstance((i.getWidth()/10),(i.getHeight()/10),Image.SCALE_DEFAULT);
         }
         catch (IOException e)
@@ -410,12 +414,18 @@ public class Game extends Canvas implements Runnable
             switchTurn();
             if (player == cpu)
             {
-                cpuAction = "raise";
+                if (user.alreadyIn == 0)
+                    cpuAction = "bet";
+                else 
+                    cpuAction = "raise";
                 newCPUMove = true;
             }
             else
             {
-                userAction = "raise";
+                if (cpu.alreadyIn == 0)
+                    userAction = "bet";
+                else 
+                    userAction = "raise";
                 newUSERMove = true;
             }
         }
@@ -609,9 +619,9 @@ public class Game extends Canvas implements Runnable
             g2d.draw(call);
             //g.drawString("next card",call.x+3,call.y+30);
             if (State == STATE.ALL_IN)
-            drawButtonText(call, "next card", fnt, g);
+                drawButtonText(call, "next card", fnt, g);
             if (State == STATE.END_GAME)
-            drawButtonText(call, "menu", fnt, g);
+                drawButtonText(call, "menu", fnt, g);
         }
     }
 
@@ -685,9 +695,6 @@ public class Game extends Canvas implements Runnable
             PokerHandOriginal u = new PokerHandOriginal(user.getCards());
             PokerHandOriginal c = new PokerHandOriginal(cpu.getCards());
             winner = u.beats(c);
-            System.out.println(cards);
-            System.out.println(cpu.getCards());
-            System.out.println(user.getCards());
             cpu.showOpponentCards(cards.get(0),cards.get(1));
             user.showOpponentCards(cards.get(7),cards.get(8));
         }
@@ -875,7 +882,7 @@ public class Game extends Canvas implements Runnable
             else
             {
                 if (State!=STATE.MENU)
-                State = STATE.END_GAME;
+                    State = STATE.END_GAME;
             }
         }
         else

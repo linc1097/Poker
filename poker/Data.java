@@ -1,18 +1,21 @@
- 
-
 import java.io.*;
 import java.util.*;
 /**
- * Write a description of class Data here.
+ * Analyzes data from data.txt, which contains information gathered from AI playing itself
+ * set to different play styles. Used by AI
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @Lincoln Updike
+ * @10.27.17
  */
 public class Data
 {
+    /**
+     * returns two maps conatining data from data.txt
+     */ 
     public Map[] readFile() throws FileNotFoundException, IOException
     {
-        BufferedReader file = new BufferedReader(new FileReader("data.txt"));
+        //BufferedReader file = new BufferedReader(new FileReader("data.txt"));
+        BufferedReader file = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("data.txt")));
         Map<Double2D,Double> map1 = new HashMap<Double2D,Double>();
         Map<Double2D,Double2D> map2 = new HashMap<Double2D,Double2D>();
         Map[] answer = new Map[2];
@@ -75,24 +78,9 @@ public class Data
         return answer;
     }
 
-    public void test()throws FileNotFoundException,IOException
-    {
-        Map[] maps = readFile();
-        Double2D butt = new Double2D(2,2);
-        butt.set(0.0,0,0);//p1 aggressive
-        butt.set(0.0,0,1);//p1 loose
-        butt.set(0.0,1,0);//p2 aggressive
-        butt.set(0.0,1,1);//p2 loose
-        double winPercent = (double)maps[0].get(butt);
-        System.out.println(winPercent);
-        Double2D a = new Double2D(2,2);
-        a.set(0.0,0,0);
-        a.set(0.8,0,1);
-        a.set(0.6,1,0);
-        a.set(1.0,1,1);
-        System.out.println(maps[0].get(a));
-    }
-
+    /**
+     * prints info to be used in table on README.md
+     */
     public void printTableInfo()throws FileNotFoundException,IOException
     {
         Map[] maps = readFile();
@@ -109,6 +97,9 @@ public class Data
             }
     }
 
+    /**
+     * prints info to be used on the graphs of the README.md
+     */
     public void printGraphInfo()throws FileNotFoundException,IOException
     {
         Map[] maps = readFile();
@@ -125,6 +116,10 @@ public class Data
         }
     }
 
+    /**
+     * takes an aggressive and loose setting and finds the setting that p;ays the 
+     * best against the given setting
+     */
     public Double2D findBest(Map map, double agg, double loose)
     {
         Double2D check = new Double2D(2,2);
@@ -177,6 +172,10 @@ public class Data
         System.out.println(a.get(0,0) + " " + a.get(0,1));
     }
 
+    /**
+     * returns the percentage time the given aggressive and loose setting
+     * calls, folds, and raises
+     */
     public Double2D getPercentages(Map map, double agg, double loose)
     {
         Double2D check = new Double2D(2,2);
@@ -231,6 +230,10 @@ public class Data
         System.out.println(a);
     }
 
+    /**
+     * returns a map where the keys are a Double2D of play styles and what it unlocks
+     * is a Double2D containing the percentage time that style raises, calls, and folds
+     */
     public Map percentages()
     {
         try {
@@ -251,6 +254,11 @@ public class Data
         }
     }
 
+    /**
+     * returns a map of the key being a given aggressive/loose combination and what it
+     * unlocks is the aggreessive/loose setting that wins the most chips per hand on
+     * average against the key's settings.
+     */
     public Map matchups()
     {
         try {
