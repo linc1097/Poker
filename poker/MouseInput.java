@@ -1,4 +1,3 @@
- 
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -77,8 +76,10 @@ public class MouseInput implements MouseListener
                 {
                     if (Game.user.isTurn && System.currentTimeMillis() - Game.timeCPU > 2500)
                     {
-                        int ans = Integer.parseInt( JOptionPane.showInputDialog("How much"));
-                        Game.user.raise(ans);
+                        try {
+                            int ans = Integer.parseInt( JOptionPane.showInputDialog("How much"));
+                            Game.user.raise(ans);
+                        } catch (Exception excep){}
                     }
                 }
             }
