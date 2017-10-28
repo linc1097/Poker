@@ -1,6 +1,7 @@
 # Heads Up Poker AI
 Contains game which allows a user to play heads up, no limit hold'em against an AI that collects data
-and alters its playing style in order to beat the user.
+and alters its playing style in order to beat the user. **To run the program download and run the poker.jar
+file above**
 ## Creating The Poker Environment
 The poker game itself that the AI plays was made with my knowledge of the rules of poker and with help
 from online tutorials. The main game loop uses a BufferedImages and drawn text and shapes to display
