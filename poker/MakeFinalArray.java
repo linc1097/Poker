@@ -1,7 +1,5 @@
- 
-
 /**
- * Used to create a scattered array in which indexes that represent the hand contain ints that reresent
+ * Used to create a sparsely populated array in which indexes that represent the hand contain ints that reresent
  * the ranking of that hand relative to all other possible 5 card hands
  * 
  * @Lincoln Updike 

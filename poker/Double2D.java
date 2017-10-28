@@ -1,5 +1,3 @@
- 
-
 import java.util.*;
 /**
  * A class containing a 2D array of doubles, used in maps because this class allows for the 2D array to have 

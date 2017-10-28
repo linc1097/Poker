@@ -1,5 +1,3 @@
- 
-
 /**
  * Represents the possibilitis of the two hand starting hands held by the players
  * 

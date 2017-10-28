@@ -1,5 +1,3 @@
- 
-
 import java.util.List;
 import java.util.ArrayList;
 /**
@@ -306,7 +304,7 @@ public class PokerHandOriginal
 
     public void fillImpCardsFlush(int suit)
     {
-        for (int x = 0;x<hand.size();x++)
+        for (int x = hand.size()-1;x>0;x--)
         {
             if (hand.get(x).getSuit() == suit)
             {

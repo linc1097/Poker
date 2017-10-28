@@ -122,6 +122,7 @@ public class Game extends Canvas implements Runnable
     public static STATE State = STATE.MENU;
 
     private BufferedImage image = new BufferedImage(WIDTH/2,HEIGHT/2,BufferedImage.TYPE_INT_RGB);
+    private PokerHandFast evaluator = new PokerHandFast();
     /**
      * initializes the picture of the cardback and the creates a mouse listener to take input from the mouse
      * of the user
@@ -692,9 +693,9 @@ public class Game extends Canvas implements Runnable
     {
         if (!handDone)
         {
-            PokerHandOriginal u = new PokerHandOriginal(user.getCards());
-            PokerHandOriginal c = new PokerHandOriginal(cpu.getCards());
-            winner = u.beats(c);
+            Card[] u = user.getCards().toArray(new Card[0]);
+            Card[] c = cpu.getCards().toArray(new Card[0]);
+            winner = evaluator.winner(u, c);
             cpu.showOpponentCards(cards.get(0),cards.get(1));
             user.showOpponentCards(cards.get(7),cards.get(8));
         }

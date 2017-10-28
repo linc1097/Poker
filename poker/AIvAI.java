@@ -1,5 +1,3 @@
- 
-
 import java.util.List;
 import java.util.ArrayList;
 /**
@@ -58,6 +56,7 @@ public class AIvAI
     public boolean someoneAllIn = false;
     public boolean allIn = false;
     public final static int PRE_FLOP = 1, FLOP = 2, TURN = 3, RIVER = 4;
+    private PokerHandFast evaluator = new PokerHandFast();
 
     public static enum STATE {
         MENU,
@@ -355,9 +354,9 @@ public class AIvAI
     {
         if (!handDone)
         {
-            PokerHandOriginal u = new PokerHandOriginal(p1.getCards());
-            PokerHandOriginal c = new PokerHandOriginal(p2.getCards());
-            winner = u.beats(c);
+            Card[] u = p1.getCards().toArray(new Card[0]);
+            Card[] c = p2.getCards().toArray(new Card[0]);
+            winner = evaluator.winner(u, c);
             p2.showOpponentCards(cards.get(0),cards.get(1));
             p1.showOpponentCards(cards.get(7),cards.get(8));
         }
