@@ -1,5 +1,0 @@
-#BlueJ class context
-comment0.params=path
-comment0.target=java.awt.image.BufferedImage\ loadImage(java.lang.String)
-comment0.text=\r\n\ takes\ a\ filepath\ and\ returns\ a\ buffered\ image.\ Filepath\ must\ be\ to\ a\ picture\ (PNG,\ JPG,\ GIF,\ etc.)\r\n
-numComments=1
