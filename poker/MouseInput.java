@@ -77,7 +77,11 @@ public class MouseInput implements MouseListener
                     {
                         try {
                             int ans = Integer.parseInt( JOptionPane.showInputDialog("How much"));
-                            Game.user.raise(ans);
+                            if (ans < 0)
+                                JOptionPane.showMessageDialog (null, "cannot raise negaitve number", 
+                                    "Error", JOptionPane.WARNING_MESSAGE);
+                            else
+                                Game.user.raise(ans);
                         } catch (Exception excep){}
                     }
                 }

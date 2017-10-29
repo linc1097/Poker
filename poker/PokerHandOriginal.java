@@ -304,7 +304,7 @@ public class PokerHandOriginal
 
     public void fillImpCardsFlush(int suit)
     {
-        for (int x = hand.size()-1;x>0;x--)
+        for (int x = hand.size()-1;x>=0;x--)
         {
             if (hand.get(x).getSuit() == suit)
             {
